@@ -11,15 +11,20 @@
 #include <stdbool.h>
 #include "State.h"
 
+typedef struct {
+	Transition * transition;
+	uint16_t transitionCount;
+} TransitionList;
+
 typedef struct _StateMachine{
-	State * currentState;
+	TransitionList * currentTransitions;
 	bool stop;
 } StateMachine;
 
-void StateMachine_start(StateMachine * this, void * dataForInitialStep);
+void StateMachine_start(StateMachine * this);
 
 
-void StateMachine_new(StateMachine * this, State * initialState);
+void StateMachine_new(StateMachine * this, TransitionList * initialTransition);
 
 
 #endif /* STATEMACHINE_H_ */

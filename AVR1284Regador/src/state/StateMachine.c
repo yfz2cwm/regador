@@ -7,18 +7,19 @@
 
 #include "StateMachine.h"
 
-void StateMachine_start(StateMachine * this, void * dataForInitialStep) {
-	Transition transition;
-	void * dataForNextStep = dataForInitialStep;
+void StateMachine_start(StateMachine * this) {
+	uint16_t i = 0;
 	while (!this->stop) {
-		transition = this->currentState->stateLoop(dataForNextStep);
-		this->currentState = transition.nextState;
-		dataForNextStep = transition.dataFornextState;
+		for (i = 0; i < this->currentTransitions->transitionCount; i++) {
+			void * dataForNextStep = this->currentTransitions->transition[i].dataFornextState;
+			Transition transition = this->currentTransitions->transition[i].nextState->stateLoop(dataForNextStep);
+			this->currentTransitions->transition[i] = transition;
+		}
 	}
 
 }
 
-void StateMachine_new(StateMachine * this, State * initialState) {
-	this->currentState = initialState;
+void StateMachine_new(StateMachine * this, TransitionList * initialTransition) {
+	this->currentTransitions = initialTransition;
 	this->stop = false;
 }

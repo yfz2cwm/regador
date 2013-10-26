@@ -7,162 +7,143 @@
 #include "buttons/buttons.h"
 #include "state/StateMachine.h"
 #include "state/State.h"
+#include "Timer.h"
+
 Transition state2Loop(void* data);
 Transition state1Loop(void * data);
-void printStatus(ButtonsStatus butStat);
+
+State state1;
+State state2;
+State clock;
 
 //100 ms
-uint8_t cms = 0;
-uint8_t seconds = 0;
-uint8_t minutes = 0;
-uint8_t hours = 0;
-uint8_t days = 0;
+uint8_t lastSecond = 99;
 
-void initTimer() {
-	TCCR1B |= (1 << WGM12); // Configure timer 1 for CTC mode
+typedef struct {
+	Timer * timer;
+} ClockUpdateData;
 
-	TIMSK1 |= (1 << OCIE1A); // Enable CTC interrupt
+Transition clockUpdate(void* data) {
+	Transition toReturn;
 
-	OCR1A = 3124; // Set CTC compare value 100ms, with a prescaler of 256
 
-	TCCR1B |= ((1 << CS12)); // Start timer at 8Mhz/256
+	toReturn.dataFornextState = data;
+	toReturn.nextState = &clock;
 
-	sei();
-	//  Enable global interrupts
-}
+	ClockUpdateData * clockUpdateData = (ClockUpdateData *) data;
 
-ISR(TIMER1_COMPA_vect)
-{
-	cms++;
-	if (cms == 10) {
-		seconds++;
-		cms = 0;
+	if (lastSecond == clockUpdateData->timer->time.seconds) {
+		//Do not update
+		return toReturn;
+	} else {
+		lastSecond = clockUpdateData->timer->time.seconds;
 	}
 
-	if (seconds == 60) {
-		seconds = 0;
-		minutes++;
-	}
-	if (minutes == 60) {
-		minutes = 0;
-		hours++;
-	}
-	if (hours == 24) {
-		hours = 0;
-		days++;
-	}
 	char buff[12];
-	snprintf(buff, 12, "%02d:%02d:%02d:%02d", days, hours, minutes, seconds);
+	snprintf(buff, 12, "%02d:%02d:%02d", clockUpdateData->timer->time.hours, clockUpdateData->timer->time.minutes, clockUpdateData->timer->time.seconds);
 	LCDWriteStringXY(0, 1, (const char *)buff);
+
+	return toReturn;
 }
 
 Transition state1Loop(void* data) {
-	State state2;
+
 	Transition state2Transition;
-
+	Transition sateSameTransition;
 	ButtonsStatus currentButtonStatus;
-	ButtonsStatus previousButtonStatus;
-	previousButtonStatus.buttons = 0;
-	State_new(&state2, &state2Loop);
-	state2Transition.dataFornextState = 0;
-	state2Transition.nextState = &state2;
-	_delay_ms(5);
-	LCDWriteStringXY(0,0,"State1");
 
-	while (1) {
-		readButtons(&currentButtonStatus);
-		if (currentButtonStatus.buttons != previousButtonStatus.buttons) {
-			previousButtonStatus.buttons = currentButtonStatus.buttons;
-			if (currentButtonStatus.button.enter) {
-				LCDWriteStringXY(7, 1, "1");
-				return state2Transition;
-			}
-		}
+
+	state2Transition.dataFornextState = data;
+	state2Transition.nextState = &state2;
+
+	sateSameTransition.dataFornextState = data;
+	sateSameTransition.nextState = &state1;
+
+	if (*((uint8_t *) data) == 0) {
+		LCDWriteStringXY(0, 0, "State1");
+		*((uint8_t *) sateSameTransition.dataFornextState)  = 1;
 	}
+
+	readButtons(&currentButtonStatus);
+	if (currentButtonStatus.button.enter) {
+		*((uint8_t *) sateSameTransition.dataFornextState) = 0;
+		return state2Transition;
+	}
+
+	return sateSameTransition;
 
 }
 
 Transition state2Loop(void * data) {
-	State state1;
 	Transition state1Transition;
+	Transition sateSameTransition;
 
 	ButtonsStatus currentButtonStatus;
-	ButtonsStatus previousButtonStatus;
-	previousButtonStatus.buttons = 0;
+
 	State_new(&state1, &state1Loop);
-	state1Transition.dataFornextState = 0;
+	state1Transition.dataFornextState = data;
 	state1Transition.nextState = &state1;
-	_delay_ms(5);
-	LCDWriteStringXY(0,0,"State2");
 
-	while (1) {
-		readButtons(&currentButtonStatus);
+	sateSameTransition.dataFornextState = data;
+	sateSameTransition.nextState = &state2;
 
-		if (currentButtonStatus.buttons != previousButtonStatus.buttons) {
-			previousButtonStatus.buttons = currentButtonStatus.buttons;
-			if (currentButtonStatus.button.back) {
-				LCDWriteStringXY(8, 1, "1");
-				return state1Transition;
-			}
-		}
+	if (*((uint8_t *) data) == 0) {
+		LCDWriteStringXY(0, 0, "State2");
+		*((uint8_t *) sateSameTransition.dataFornextState) = 1;
 	}
-}
 
-void printStatus(ButtonsStatus butStat) {
-	if (butStat.buttons != 0) {
-		if (butStat.button.enter) {
-			LCDWriteStringXY(0, 1, "1");
-		} else {
-			LCDWriteStringXY(0, 1, "0");
-		}
-		if (butStat.button.up) {
-			LCDWriteStringXY(1, 1, "1");
-		} else {
-			LCDWriteStringXY(1, 1, "0");
-		}
-		if (butStat.button.down) {
-			LCDWriteStringXY(2, 1, "1");
-		} else {
-			LCDWriteStringXY(2, 1, "0");
-		}
-		if (butStat.button.back) {
-			LCDWriteStringXY(3, 1, "1");
-		} else {
-			LCDWriteStringXY(3, 1, "0");
-		}
+	readButtons(&currentButtonStatus);
 
+	if (currentButtonStatus.button.back) {
+		*((uint8_t *) sateSameTransition.dataFornextState) = 0;
+		return state1Transition;
 	}
+
+	return sateSameTransition;
 }
 
 int main(void) {
-	ButtonsStatus currentButtonStatus;
-	ButtonsStatus previousButtonStatus;
-	State state1;
 	StateMachine stateMachine;
+
+	TransitionList transitionList;
+	Transition transitionArray[2];
+	transitionList.transition = transitionArray;
+	transitionList.transitionCount = 2;
+	ClockUpdateData clockUpdateData;
+
+	uint8_t loopData = 0;
+
+	Timer * timer;
 
 //Initialize the buttons
 	initButtons();
 //Initialize LCD module
 	LCDInit(LS_BLINK | LS_ULINE);
 
-	initTimer();
+	LCDClear();
+	timer = Timer_getInstance();
+	Timer_init(timer);
+
 	State_new(&state1, &state1Loop);
+	State_new(&state2, &state2Loop);
+	State_new(&clock, &clockUpdate);
 
-	previousButtonStatus.buttons = 0;
+	clockUpdateData.timer = timer;
 
-	StateMachine_new(&stateMachine, &state1);
-	StateMachine_start(&stateMachine, 0);
+	transitionList.transition[1].dataFornextState = &clockUpdateData;
+	transitionList.transition[1].nextState = &clock;
 
-//Clear the screen
+	transitionList.transition[0].dataFornextState = &loopData;
+	transitionList.transition[0].nextState = &state1;
+
+
+	StateMachine_new(&stateMachine, &transitionList);
+
+	StateMachine_start(&stateMachine);
 
 
 	while (1) {
 
-//		readButtons(&currentButtonStatus);
-//		if (currentButtonStatus.buttons != previousButtonStatus.buttons) {
-//			printStatus(currentButtonStatus);
-//			previousButtonStatus.buttons = currentButtonStatus.buttons;
-//		}
 	}
 
 }
