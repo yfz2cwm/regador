@@ -5,9 +5,11 @@
  *      Author: juan
  */
 
+#include <avr/io.h>
+#include <stdint.h>
+
 #ifndef BUTTONS_H_
 #define BUTTONS_H_
-#include <avr/io.h>
 
 #define _CONCAT(a,b) a##b
 #define PORT(x) _CONCAT(PORT,x)
