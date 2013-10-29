@@ -1,0 +1,59 @@
+@startuml
+
+[*] --> Active
+
+state Active {
+	[*] -> Regando
+	Regando --> NoRegando : Disable
+	NoRegando -->  Regando : Enable
+	--
+	[*] -> Main
+	Main --> Zones : Up
+	Main --> ShowRegandoState : Down
+	ShowRegandoState --> Main : Up
+	ShowRegandoState --> Clock :Down
+	Clock --> ShowRegandoState : Up
+	Clock --> Zones :Down
+	Clock --> EditClock :Enter
+	EditClock --> Clock :Enter
+	EditClock --> Clock :Back
+	Zones --> Clock : Up
+	Zones --> Main : Down
+	Zones -left-> ShowZones : Enter
+	ShowZones --> Zones : Enter
+	ShowZones --> Zones : Back
+	
+	ShowRegandoState --> EditRegandoState : Enter
+	EditRegandoState --> ShowRegandoState : Back
+	EditRegandoState --> ShowRegandoState : Enter 
+	
+	state ShowZones{
+		[*]-->ShowZone1
+		ShowZone1 --> EditZone1 : Enter
+		EditZone1 --> ShowZone1 : Enter
+		EditZone1 --> ShowZone1 : Back
+		ShowZone1 --> ShowZone2 : Down
+		
+		ShowZone2 --> ShowZone1 : Up
+		ShowZone2 --> EditZone2 : Enter
+		EditZone2 --> ShowZone2 : Enter
+		EditZone2 --> ShowZone2 : Back
+		ShowZone2 --> ShowZoneN : Down
+		
+		ShowZoneN --> ShowZone2 : Up
+		ShowZoneN --> EditZoneN : Enter
+		EditZoneN --> ShowZoneN : Enter
+		EditZoneN --> ShowZoneN : Back
+		ShowZoneN --> ShowZone1 : Down
+	}
+	
+	note right of EditRegandoState 
+		If enter trigger 
+		enable/disable 
+		transition
+		on Regando
+	end note 
+
+} 
+
+@enduml

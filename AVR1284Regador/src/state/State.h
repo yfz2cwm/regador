@@ -9,6 +9,7 @@
 #define STATE_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef struct Transition Transition;
 typedef struct State State;
@@ -24,5 +25,9 @@ struct State {
 };
 
 void State_new (State * this, Transition (*stateLoop)(void*));
+
+Transition Transition_nullTransition();
+
+bool Transition_isNullTransition(Transition * this);
 
 #endif /* STATE_H_ */

@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "../state/StateMachine.h"
+#include "../Regador.h"
+
 State state1;
 State state2;
 Transition task1(void *data) {
@@ -22,6 +24,11 @@ Transition task2(void *data) {
 }
 
 int main(int argc, char **argv) {
+	doStuff();
+	return 0;
+}
+
+int mainA(int argc, char **argv) {
 
 	StateMachine stateMachine;
 
