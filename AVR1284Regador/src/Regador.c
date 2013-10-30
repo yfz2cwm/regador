@@ -28,15 +28,32 @@ MenuEntryTransitionData timeData, zonesData, regadorStatusData;
 StateShowNumber showSeconds;
 StateShowNumberTransitionData showSecondsData;
 
+StateCfgNumber secondsStateCfg;
+StateCfgNumberTransitionData secondsStateCfgData;
+
 State clock;
+
+void initCfgSeconds() {
+
+	Transition backTransition;
+	backTransition.nextState = &(showSeconds.selfState);
+	backTransition.dataFornextState = &showSecondsData;
+	secondsStateCfgData.instance = &secondsStateCfg;
+	StateCfgNumber_new(&secondsStateCfg,"Segundos*:",(uint16_t *)&(Timer_getInstance()->time.seconds),backTransition);
+}
 
 void initShowSeconds() {
 	Transition backTransition;
+	Transition editTransition;
 	backTransition.nextState = &(menuStateTime.selfState);
 	backTransition.dataFornextState = &timeData;
+	editTransition.nextState = &(secondsStateCfg.selfState);
+	editTransition.dataFornextState = &secondsStateCfgData;
+
+
 	showSecondsData.instance = &showSeconds;
 
-	StateShowNumber_new(&showSeconds, "Segundos:", (uint16_t *)&(Timer_getInstance()->time.seconds), backTransition, Transition_nullTransition());
+	StateShowNumber_new(&showSeconds, "Segundos:", (uint16_t *)&(Timer_getInstance()->time.seconds), backTransition, editTransition);
 }
 
 void initMenuStateRegadorStatus() {
@@ -57,6 +74,7 @@ void initMenuStateZones() {
 	Transition down;
 
 	zonesData.instance = &menuStateZones;
+
 	up.dataFornextState = &regadorStatusData;
 	up.nextState = &menuStateRegadorStatus.selfState;
 	down.dataFornextState = &timeData;
@@ -81,6 +99,7 @@ void initMenuStateTime() {
 }
 
 void initMenu() {
+	initCfgSeconds();
 	initShowSeconds();
 	initMenuStateRegadorStatus();
 	initMenuStateZones();
@@ -121,9 +140,9 @@ void doStuff(void) {
 	StateMachine stateMachine;
 
 	TransitionList transitionList;
-	Transition transitionArray[2];
+	Transition transitionArray[1];
 	transitionList.transition = transitionArray;
-	transitionList.transitionCount = 2;
+	transitionList.transitionCount = 1;
 	ClockUpdateData clockUpdateData;
 
 	MenuEntryTransitionData regadorStatus;
@@ -149,8 +168,8 @@ void doStuff(void) {
 	transitionList.transition[0].dataFornextState = &regadorStatus;
 	transitionList.transition[0].nextState = &menuStateRegadorStatus.selfState;
 
-	transitionList.transition[1].dataFornextState = &clockUpdateData;
-	transitionList.transition[1].nextState = &clock;
+//	transitionList.transition[1].dataFornextState = &clockUpdateData;
+//	transitionList.transition[1].nextState = &clock;
 
 	StateMachine_new(&stateMachine, &transitionList);
 

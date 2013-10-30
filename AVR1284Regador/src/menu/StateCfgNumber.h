@@ -15,8 +15,8 @@ typedef struct {
 	State selfState;
 	char * label;
 	uint16_t * variable;
-	State * returnState;
-	bool firstTime;
+	Transition returnTransition;
+	bool shouldPrint;
 	uint16_t lastSelectedValue;
 	uint16_t lastPrintValue;
 } StateCfgNumber;
@@ -27,7 +27,7 @@ typedef struct {
 
 Transition StateCfgNumber_cfgNumber(void * data);
 
-void StateCfgNumber_new(StateCfgNumber * this, char* label, uint16_t * variable, State * returnState);
+void StateCfgNumber_new(StateCfgNumber * this, char* label, uint16_t * variable, Transition returnTransition);
 
 void StateCfgNumber_updateScreen(StateCfgNumber* instance);
 
