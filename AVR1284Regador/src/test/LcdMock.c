@@ -6,25 +6,31 @@
  */
 #include <stdint.h>
 #include <stdio.h>
-char display [2][17];
+#include <string.h>
+
+char display[2][17];
+uint8_t xCurrent, yCurrent = 0;
 
 void LCDInit(uint8_t style) {
-
+	display[0][16] = '\0';
+	display[1][16] = '\0';
 }
 void LCDByte(uint8_t a, uint8_t b) {
 
 }
 
-void showDisplay(){
+void showDisplay() {
 	printf("------------------ \n");
-	printf("|%s|\n",display[0]);
-	printf("|%s|\n",display[1]);
+	printf("|%16s|\n", display[0]);
+	printf("|%16s|\n", display[1]);
 	printf("------------------ \n");
 }
 
 void LCDWriteString(const char *msg) {
-	printf("%s", msg);
-	printf("\n");
+//	printf("%s", msg);
+	char * to = &display[yCurrent][xCurrent];
+	strncpy(to,msg,16);
+	showDisplay();
 }
 
 void LCDWriteInt(int val, unsigned int field_length) {
@@ -33,5 +39,6 @@ void LCDWriteInt(int val, unsigned int field_length) {
 }
 
 void LCDGotoXY(uint8_t x, uint8_t y) {
-
+	xCurrent = x;
+	yCurrent = y;
 }
