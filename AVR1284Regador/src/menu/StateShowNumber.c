@@ -23,8 +23,8 @@ void StateShowNumber_updateScreen(StateShowNumber * instance) {
 	if (instance->shouldPrint) {
 		LCDClear();
 		LCDWriteStringXY(0, 0, instance->label);
-		char buff[12];
-		snprintf(buff, 12, "%d", *instance->variable);
+		char buff[17];
+		snprintf(buff, 17, "%16d", *instance->variable);
 		LCDWriteStringXY(0, 1, (const char * )buff);
 	}
 }
