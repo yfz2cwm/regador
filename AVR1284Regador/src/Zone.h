@@ -10,6 +10,9 @@
 #include "Timer.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include "state/State.h"
+
+#define ACTIVATION_CYLCES_COUNT 5
 
 typedef struct {
 	bool enable;
@@ -20,8 +23,18 @@ typedef struct {
 typedef struct {
 	uint16_t port;
 	uint16_t pinNumber;
-	ActivationCycle activatioinCycles[5];
+	ActivationCycle activatioinCycles[ACTIVATION_CYLCES_COUNT];
+	bool enable;
 } Zone;
 
+typedef struct {
+	Zone * zones;
+	uint16_t count;
+} ZoneList;
+
+
+Transition Zone_initMenu(Transition backTransition);
+
+ZoneList Zone_initZones();
 
 #endif /* ZONE_H_ */

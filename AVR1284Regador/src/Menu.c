@@ -10,7 +10,7 @@
 #include "menu/StateShowNumber.h"
 #include "menu/StateCfgNumber.h"
 #include "Timer.h"
-
+#include "Zone.h"
 
 StateMenuEntry menuStateRegadorStatus;
 StateMenuEntry menuStateZones;
@@ -29,7 +29,7 @@ void initCfgSeconds() {
 	backTransition.nextState = &(showSeconds.selfState);
 	backTransition.dataFornextState = &showSecondsData;
 	secondsStateCfgData.instance = &secondsStateCfg;
-	StateCfgNumber_new(&secondsStateCfg,"Segundos*:",(uint16_t *)&(Timer_getInstance()->time.seconds),backTransition);
+	StateCfgNumber_new(&secondsStateCfg, "Segundos*:", (uint16_t *) &(Timer_getInstance()->time.seconds), backTransition);
 }
 
 void initShowSeconds() {
@@ -40,10 +40,9 @@ void initShowSeconds() {
 	editTransition.nextState = &(secondsStateCfg.selfState);
 	editTransition.dataFornextState = &secondsStateCfgData;
 
-
 	showSecondsData.instance = &showSeconds;
 
-	StateShowNumber_new(&showSeconds, "Segundos:", (uint16_t *)&(Timer_getInstance()->time.seconds), backTransition, editTransition);
+	StateShowNumber_new(&showSeconds, "Segundos:", (uint16_t *) &(Timer_getInstance()->time.seconds), backTransition, editTransition);
 }
 
 void initMenuStateRegadorStatus() {
@@ -62,15 +61,20 @@ void initMenuStateRegadorStatus() {
 void initMenuStateZones() {
 	Transition up;
 	Transition down;
-
+	Transition backToZonesTransition;
+	Transition goToZonesDetail;
 	zonesData.instance = &menuStateZones;
 
 	up.dataFornextState = &regadorStatusData;
 	up.nextState = &menuStateRegadorStatus.selfState;
 	down.dataFornextState = &timeData;
 	down.nextState = &menuStateTime.selfState;
+	backToZonesTransition.nextState = &menuStateZones.selfState;
+	backToZonesTransition.dataFornextState = &zonesData;
 
-	StateMenuEntry_new(&menuStateZones, "Zonas", up, down, Transition_nullTransition(), Transition_nullTransition());
+	goToZonesDetail = Zone_initMenu(backToZonesTransition);
+	StateMenuEntry_new(&menuStateZones, "Zonas", up, down, goToZonesDetail, Transition_nullTransition());
+
 }
 
 void initMenuStateTime() {

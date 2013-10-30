@@ -81,9 +81,7 @@ void doStuff(void) {
 
 	clockUpdateData.timer = timer;
 
-
 	transitionList.transition[0] = menuInitialTransition;
-
 
 	StateMachine_new(&stateMachine, &transitionList);
 
