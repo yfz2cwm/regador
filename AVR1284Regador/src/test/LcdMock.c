@@ -16,20 +16,22 @@ void LCDInit(uint8_t style) {
 	display[1][16] = '\0';
 }
 void LCDByte(uint8_t a, uint8_t b) {
-
+	if(b== 0 && a == 0b00000001){
+		memset(&display[0][0],' ',16);
+		memset(&display[1][0],' ',16);
+	}
 }
 
 void showDisplay() {
 	printf("------------------ \n");
-	printf("|%16s|\n", display[0]);
-	printf("|%16s|\n", display[1]);
+	printf("|%s|\n", display[0]);
+	printf("|%s|\n", display[1]);
 	printf("------------------ \n");
 }
 
 void LCDWriteString(const char *msg) {
-//	printf("%s", msg);
 	char * to = &display[yCurrent][xCurrent];
-	strncpy(to,msg,16);
+	strncpy(to,msg,strlen(msg));
 	showDisplay();
 }
 
