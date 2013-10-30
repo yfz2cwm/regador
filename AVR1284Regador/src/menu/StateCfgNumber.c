@@ -20,6 +20,7 @@ void StateCfgNumber_new(StateCfgNumber * this, char* label, uint16_t * variable,
 
 void StateCfgNumber_updateScreen(StateCfgNumber* instance) {
 	if (instance->shouldPrint) {
+		LCDClear();
 		LCDWriteStringXY(0, 0, instance->label);
 	}
 	if (instance->lastSelectedValue != instance->lastPrintValue) {
