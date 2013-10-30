@@ -5,7 +5,6 @@
  *      Author: juan
  */
 #include <stddef.h>
-#include <stdio.h>
 #include "StateMenuEntry.h"
 #include "../lcd/lcd.h"
 #include "../buttons/buttons.h"
@@ -21,10 +20,9 @@ void StateMenuEntry_new(StateMenuEntry * this, char * label, Transition up, Tran
 }
 
 void StateMenuEntry_updateScreen(StateMenuEntry * this) {
-	char buff[16];
-	sprintf(buff,"%-16s",this->label);
 	if (this->firstTime) {
-		LCDWriteStringXY(0, 0, buff);
+		LCDClear();
+		LCDWriteStringXY(0, 0, this->label);
 	}
 }
 

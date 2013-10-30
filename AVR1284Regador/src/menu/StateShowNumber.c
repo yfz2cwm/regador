@@ -21,6 +21,7 @@ void StateShowNumber_new(StateShowNumber * this, char * label, uint16_t * variab
 
 void StateShowNumber_updateScreen(StateShowNumber * instance) {
 	if (instance->shouldPrint) {
+		LCDClear();
 		LCDWriteStringXY(0, 0, instance->label);
 		char buff[12];
 		snprintf(buff, 12, "%d", *instance->variable);
