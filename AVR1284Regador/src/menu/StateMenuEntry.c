@@ -4,10 +4,11 @@
  *  Created on: Oct 27, 2013
  *      Author: juan
  */
+#include <stddef.h>
+#include <stdio.h>
 #include "StateMenuEntry.h"
 #include "../lcd/lcd.h"
 #include "../buttons/buttons.h"
-#include <stddef.h>
 
 void StateMenuEntry_new(StateMenuEntry * this, char * label, Transition up, Transition down, Transition enter, Transition back) {
 	this->label = label;
@@ -20,8 +21,10 @@ void StateMenuEntry_new(StateMenuEntry * this, char * label, Transition up, Tran
 }
 
 void StateMenuEntry_updateScreen(StateMenuEntry * this) {
+	char buff[16];
+	sprintf(buff,"%-16s",this->label);
 	if (this->firstTime) {
-		LCDWriteStringXY(0, 0, this->label);
+		LCDWriteStringXY(0, 0, buff);
 	}
 }
 
