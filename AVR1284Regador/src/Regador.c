@@ -49,7 +49,7 @@ void initMenuStateRegadorStatus() {
 	down.dataFornextState = &zonesData;
 	down.nextState = &menuStateZones.selfState;
 
-	StateMenuEntry_new(&menuStateRegadorStatus, "Estado de regador", up, down, Transition_nullTransition(), Transition_nullTransition());
+	StateMenuEntry_new(&menuStateRegadorStatus, "Regando", up, down, Transition_nullTransition(), Transition_nullTransition());
 }
 
 void initMenuStateZones() {
