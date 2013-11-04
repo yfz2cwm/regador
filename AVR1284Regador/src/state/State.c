@@ -21,3 +21,9 @@ Transition Transition_nullTransition(){
 bool Transition_isNullTransition(Transition * this){
 	return this->nextState == NULL;
 }
+
+Transition * Transition_new(Transition * this, State * state, void * transitionData){
+	this->nextState = state;
+	this->dataFornextState = transitionData;
+	return this;
+}
