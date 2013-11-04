@@ -9,7 +9,7 @@
 #include "../lcd/lcd.h"
 #include "../buttons/buttons.h"
 
-void StateCfgNumber_new(StateCfgNumber * this, char* label, uint16_t * variable, Transition returnTransition) {
+void StateCfgNumber_new(StateCfgNumber * this, char* label, uint16_t * variable, Transition * returnTransition) {
 	this->label = label;
 	this->variable = variable;
 	this->returnTransition = returnTransition;
@@ -37,27 +37,28 @@ Transition StateCfgNumber_cfgNumber(void * data) {
 	StateCfgNumberTransitionData * transitionData = (StateCfgNumberTransitionData *) data;
 	StateCfgNumber * instance = transitionData->instance;
 
-	if(instance->shouldPrint){
+	if (instance->shouldPrint) {
 		instance->lastSelectedValue = *instance->variable;
 		//Force print the last selected value.
-		instance->lastPrintValue = instance->lastSelectedValue +1;
+		instance->lastPrintValue = instance->lastSelectedValue + 1;
 	}
 
 	StateCfgNumber_updateScreen(instance);
 	transition.nextState = &(instance->selfState);
+	transition.dataFornextState = transitionData;
 	instance->shouldPrint = false;
 
 	readButtons(&buttonStatus);
-	if(buttonStatus.button.enter){
+	if (buttonStatus.button.enter) {
 		*instance->variable = instance->lastSelectedValue;
 		instance->shouldPrint = true;
-		transition =  instance->returnTransition;
-	}else if (buttonStatus.button.back) {
+		transition = *instance->returnTransition;
+	} else if (buttonStatus.button.back) {
 		instance->shouldPrint = true;
-		transition =  instance->returnTransition;
-	}else if (buttonStatus.button.down){
+		transition = *instance->returnTransition;
+	} else if (buttonStatus.button.down) {
 		instance->lastSelectedValue--;
-	}else if (buttonStatus.button.up){
+	} else if (buttonStatus.button.up) {
 		instance->lastSelectedValue++;
 	}
 	return transition;
