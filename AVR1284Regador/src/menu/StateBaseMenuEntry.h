@@ -25,4 +25,6 @@ Transition StateBaseMenuEntry_doTransitionIfNeeded(StateBaseMenuEntry * this);
 
 State * StateBaseMenuEntry_getState(StateBaseMenuEntry * this);
 
+void StateBaseMenuEntry_setStateLoop(StateBaseMenuEntry * this,State_stateLoop newStateLoop);
+
 #endif /* STATEBASEMENUENTRY_H_ */

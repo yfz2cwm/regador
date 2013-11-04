@@ -11,14 +11,11 @@
 #include <stdint.h>
 #include "../state/State.h"
 #include "StateCfgNumber.h"
+#include "StateMenuEntry.h"
 
 typedef struct {
-	State super;
-	char * label;
-	Transition returnTransition;
-	Transition editTransition;
+	StateMenuEntry super;
 	uint16_t * variable;
-	bool shouldPrint;
 } StateShowNumber;
 
 typedef struct {
@@ -27,5 +24,7 @@ typedef struct {
 void StateShowNumber_new(StateShowNumber * this, char* label, uint16_t * variable, Transition returnTransition, Transition editTransition);
 
 Transition StateShowNumber_showNumber(void * instance, void * data);
+
+State * StateShowNumber_getState(StateShowNumber * this);
 
 #endif /* STATESHOWNUMBER_H_ */

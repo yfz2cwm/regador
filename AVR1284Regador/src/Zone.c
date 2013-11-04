@@ -32,27 +32,27 @@ Transition Zone_initMenu(Transition backTransition) {
 
 	Zone_initLabels();
 
-	up.nextState = &zoneMenuEntries[ZONE_COUNT - 1].super;
+	up.nextState = StateMenuEntry_getState(&zoneMenuEntries[ZONE_COUNT - 1]);
 	up.dataFornextState = &zoneMenuEntriesTransitionData[ZONE_COUNT - 1];
-	down.nextState = &zoneMenuEntries[1].super;
+	down.nextState = StateMenuEntry_getState(&zoneMenuEntries[1]);
 	down.dataFornextState = &zoneMenuEntriesTransitionData[1];
 
 	StateMenuEntry_new(&zoneMenuEntries[0], zoneMenuEntriesLabels[0], up, down, Transition_nullTransition(), backTransition);
 
 	for (i = 1; i < ZONE_COUNT - 1; i++) {
-		up.nextState = &zoneMenuEntries[i - 1].super;
+		up.nextState = StateMenuEntry_getState(&zoneMenuEntries[i - 1]);
 		up.dataFornextState = &zoneMenuEntriesTransitionData[i - 1];
-		down.nextState = &zoneMenuEntries[i + 1].super;
+		down.nextState = StateMenuEntry_getState(&zoneMenuEntries[i + 1]);
 		down.dataFornextState = &zoneMenuEntriesTransitionData[i + 1];
 		StateMenuEntry_new(&zoneMenuEntries[i], zoneMenuEntriesLabels[i], up, down, Transition_nullTransition(), backTransition);
 	}
 
-	up.nextState = &zoneMenuEntries[ZONE_COUNT - 2].super;
+	up.nextState = StateMenuEntry_getState(&zoneMenuEntries[ZONE_COUNT - 2]);
 	up.dataFornextState = &zoneMenuEntriesTransitionData[ZONE_COUNT - 2];
-	down.nextState = &zoneMenuEntries[0].super;
+	down.nextState = StateMenuEntry_getState(&zoneMenuEntries[0]);
 	down.dataFornextState = &zoneMenuEntriesTransitionData[0];
 	StateMenuEntry_new(&zoneMenuEntries[ZONE_COUNT - 1], zoneMenuEntriesLabels[ZONE_COUNT - 1], up, down, Transition_nullTransition(), backTransition);
-	transitionToReturn.nextState = &zoneMenuEntries[0].super;
+	transitionToReturn.nextState = StateMenuEntry_getState(&zoneMenuEntries[0]);
 	transitionToReturn.dataFornextState = &zoneMenuEntriesTransitionData[0];
 
 	return transitionToReturn;

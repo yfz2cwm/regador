@@ -11,42 +11,26 @@
 #include "../buttons/buttons.h"
 
 void StateShowNumber_new(StateShowNumber * this, char * label, uint16_t * variable, Transition returnTransition, Transition editTransition) {
-	State_new(&(this->super),this, &StateShowNumber_showNumber);
-	this->label = label;
+	StateMenuEntry_new(&this->super, label, Transition_nullTransition(), Transition_nullTransition(), editTransition, returnTransition);
+	StateMenuEntry_setStateLoop(&this->super, &StateShowNumber_showNumber);
 	this->variable = variable;
-	this->returnTransition = returnTransition;
-	this->editTransition = editTransition;
-	this->shouldPrint = true;
 }
 
-void StateShowNumber_updateScreen(StateShowNumber * instance) {
-	if (instance->shouldPrint) {
-		LCDClear();
-		LCDWriteStringXY(0, 0, instance->label);
+void StateShowNumber_updateScreen(StateShowNumber * this) {
+	StateMenuEntry_updateScreen(&this->super);
+	if (this->super.super.shouldPaint) {
 		char buff[17];
-		snprintf(buff, 17, "%16d", *instance->variable);
+		snprintf(buff, 17, "%16d", *this->variable);
 		LCDWriteStringXY(0, 1, (const char * )buff);
 	}
 }
 
 Transition StateShowNumber_showNumber(void * instance, void * data) {
-	StateShowNumber * this =  (StateShowNumber * ) instance;
-	Transition noTransition;
-	ButtonsStatus buttonStatus;
+	StateShowNumber * this = (StateShowNumber *) instance;
 	StateShowNumber_updateScreen(this);
-	readButtons(&buttonStatus);
-	this->shouldPrint = false;
+	return StateBaseMenuEntry_doTransitionIfNeeded(&this->super.super);
+}
 
-	if (buttonStatus.button.back) {
-		this->shouldPrint = true;
-		return this->returnTransition;
-	} else if (buttonStatus.button.enter) {
-		if (!Transition_isNullTransition(&(this->editTransition))) {
-			this->shouldPrint = true;
-			return this->editTransition;
-		}
-	}
-
-	noTransition.nextState = &(this->super);
-	return noTransition;
+State * StateShowNumber_getState(StateShowNumber * this){
+	return StateMenuEntry_getState(&this->super);
 }

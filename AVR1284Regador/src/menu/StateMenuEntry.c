@@ -31,3 +31,7 @@ Transition StateMenuEntry_showMenu(void* instance, void * data) {
 State * StateMenuEntry_getState(StateMenuEntry * this){
 	return StateBaseMenuEntry_getState(&this->super);
 }
+
+void StateMenuEntry_setStateLoop(StateMenuEntry * this,State_stateLoop newStateLoop){
+	return StateBaseMenuEntry_setStateLoop(&this->super,newStateLoop);
+}

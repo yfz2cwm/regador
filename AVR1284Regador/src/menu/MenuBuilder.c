@@ -23,10 +23,10 @@ Transition MenuBuilder_buildMenuAndConfigurationNumber(
 
 	//Transition show
 	StateShowNumber_new(&numberConfigAndEdit->showNumberState, menulabel, variable, returnTransition, numberConfigAndEdit->toEdit);
-	Transition_new(&numberConfigAndEdit->toShow, &numberConfigAndEdit->showNumberState.super, &numberConfigAndEdit->showNumberTransitionData);
+	Transition_new(&numberConfigAndEdit->toShow, StateShowNumber_getState(&numberConfigAndEdit->showNumberState), &numberConfigAndEdit->showNumberTransitionData);
 
 
-	Transition_new(&transitionToShow, &numberConfigAndEdit->showNumberState.super, &numberConfigAndEdit->showNumberTransitionData);
+	Transition_new(&transitionToShow,StateShowNumber_getState(&numberConfigAndEdit->showNumberState), &numberConfigAndEdit->showNumberTransitionData);
 
 	return transitionToShow;
 }

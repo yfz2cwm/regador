@@ -56,3 +56,6 @@ Transition StateBaseMenuEntry_doTransitionIfNeeded(StateBaseMenuEntry * this) {
 State * StateBaseMenuEntry_getState(StateBaseMenuEntry * this){
 	return &this->super;
 }
+void StateBaseMenuEntry_setStateLoop(StateBaseMenuEntry * this,State_stateLoop newStateLoop){
+	this->super.stateLoop = newStateLoop;
+}

@@ -24,4 +24,8 @@ Transition StateMenuEntry_showMenu(void * instance, void * data);
 
 State * StateMenuEntry_getState(StateMenuEntry * this);
 
+void StateMenuEntry_setStateLoop(StateMenuEntry * this,State_stateLoop newStateLoop);
+
+void StateMenuEntry_updateScreen(StateMenuEntry * this);
+
 #endif /* STATEMENUENTRY_H_ */
