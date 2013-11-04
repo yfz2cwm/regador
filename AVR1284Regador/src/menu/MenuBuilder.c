@@ -18,17 +18,15 @@ Transition MenuBuilder_buildMenuAndConfigurationNumber(
 
 
 	//Transition edit
-	numberConfigAndEdit->cfgNumberTransitionData.instance = &(numberConfigAndEdit->cfgNumberState);
 	StateCfgNumber_new(&numberConfigAndEdit->cfgNumberState, editLabel, (uint16_t * )variable, &numberConfigAndEdit->toShow);
-	Transition_new(&numberConfigAndEdit->toEdit, &(numberConfigAndEdit->cfgNumberState.selfState), &(numberConfigAndEdit->cfgNumberTransitionData));
+	Transition_new(&numberConfigAndEdit->toEdit, &(numberConfigAndEdit->cfgNumberState.super), &(numberConfigAndEdit->cfgNumberTransitionData));
 
 	//Transition show
-	numberConfigAndEdit->showNumberTransitionData.instance = &numberConfigAndEdit->showNumberState;
 	StateShowNumber_new(&numberConfigAndEdit->showNumberState, menulabel, variable, returnTransition, numberConfigAndEdit->toEdit);
-	Transition_new(&numberConfigAndEdit->toShow, &numberConfigAndEdit->showNumberState.selfState, &numberConfigAndEdit->showNumberTransitionData);
+	Transition_new(&numberConfigAndEdit->toShow, &numberConfigAndEdit->showNumberState.super, &numberConfigAndEdit->showNumberTransitionData);
 
 
-	Transition_new(&transitionToShow, &numberConfigAndEdit->showNumberState.selfState, &numberConfigAndEdit->showNumberTransitionData);
+	Transition_new(&transitionToShow, &numberConfigAndEdit->showNumberState.super, &numberConfigAndEdit->showNumberTransitionData);
 
 	return transitionToShow;
 }

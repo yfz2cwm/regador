@@ -7,8 +7,9 @@
 #include "State.h"
 #include <stddef.h>
 
-void State_new(State * this, State_stateLoop stateLoop) {
+void State_new(State * this, void * concreteStateInstance, State_stateLoop stateLoop){
 	this->stateLoop = stateLoop;
+	this->concreteStateInstance = concreteStateInstance;
 }
 
 Transition Transition_nullTransition(){

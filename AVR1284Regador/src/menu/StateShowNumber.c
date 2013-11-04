@@ -11,7 +11,7 @@
 #include "../buttons/buttons.h"
 
 void StateShowNumber_new(StateShowNumber * this, char * label, uint16_t * variable, Transition returnTransition, Transition editTransition) {
-	State_new(&(this->selfState), &StateShowNumber_showNumber);
+	State_new(&(this->super),this, &StateShowNumber_showNumber);
 	this->label = label;
 	this->variable = variable;
 	this->returnTransition = returnTransition;
@@ -29,25 +29,24 @@ void StateShowNumber_updateScreen(StateShowNumber * instance) {
 	}
 }
 
-Transition StateShowNumber_showNumber(void * data) {
+Transition StateShowNumber_showNumber(void * instance, void * data) {
+	StateShowNumber * this =  (StateShowNumber * ) instance;
 	Transition noTransition;
 	ButtonsStatus buttonStatus;
-	StateShowNumberTransitionData * transitionData = (StateShowNumberTransitionData *) data;
-	StateShowNumber_updateScreen(transitionData->instance);
+	StateShowNumber_updateScreen(this);
 	readButtons(&buttonStatus);
-	transitionData->instance->shouldPrint = false;
+	this->shouldPrint = false;
 
 	if (buttonStatus.button.back) {
-		transitionData->instance->shouldPrint = true;
-		return transitionData->instance->returnTransition;
+		this->shouldPrint = true;
+		return this->returnTransition;
 	} else if (buttonStatus.button.enter) {
-		if (!Transition_isNullTransition(&(transitionData->instance->editTransition))) {
-			transitionData->instance->shouldPrint = true;
-			return transitionData->instance->editTransition;
+		if (!Transition_isNullTransition(&(this->editTransition))) {
+			this->shouldPrint = true;
+			return this->editTransition;
 		}
 	}
 
-	noTransition.nextState = &(transitionData->instance->selfState);
-	noTransition.dataFornextState = transitionData;
+	noTransition.nextState = &(this->super);
 	return noTransition;
 }

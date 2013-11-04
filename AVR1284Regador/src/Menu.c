@@ -31,12 +31,11 @@ Transition initCfgSeconds(Transition backTransition) {
 void initMenuStateRegadorStatus() {
 	Transition up;
 	Transition down;
-	regadorStatusData.instance = &menuStateRegadorStatus;
 
 	up.dataFornextState = &timeData;
-	up.nextState = &menuStateTime.selfState;
+	up.nextState = &menuStateTime.super;
 	down.dataFornextState = &zonesData;
-	down.nextState = &menuStateZones.selfState;
+	down.nextState = &menuStateZones.super;
 
 	StateMenuEntry_new(&menuStateRegadorStatus, "Regando", up, down, Transition_nullTransition(), Transition_nullTransition());
 }
@@ -46,13 +45,12 @@ void initMenuStateZones() {
 	Transition down;
 	Transition backToZonesTransition;
 	Transition goToZonesDetail;
-	zonesData.instance = &menuStateZones;
 
 	up.dataFornextState = &regadorStatusData;
-	up.nextState = &menuStateRegadorStatus.selfState;
+	up.nextState = &menuStateRegadorStatus.super;
 	down.dataFornextState = &timeData;
-	down.nextState = &menuStateTime.selfState;
-	backToZonesTransition.nextState = &menuStateZones.selfState;
+	down.nextState = &menuStateTime.super;
+	backToZonesTransition.nextState = &menuStateZones.super;
 	backToZonesTransition.dataFornextState = &zonesData;
 
 	goToZonesDetail = Zone_initMenu(backToZonesTransition);
@@ -66,13 +64,12 @@ void initMenuStateTime() {
 	Transition enter;
 	Transition toReturnHere;
 
-	timeData.instance = &menuStateTime;
 	up.dataFornextState = &zonesData;
-	up.nextState = &menuStateZones.selfState;
+	up.nextState = &menuStateZones.super;
 	down.dataFornextState = &regadorStatusData;
-	down.nextState = &menuStateRegadorStatus.selfState;
+	down.nextState = &menuStateRegadorStatus.super;
 
-	Transition_new(&toReturnHere, &menuStateTime.selfState, &timeData);
+	Transition_new(&toReturnHere, &menuStateTime.super, &timeData);
 	enter = initCfgSeconds(toReturnHere);
 	StateMenuEntry_new(&menuStateTime, "Time", up, down, enter, Transition_nullTransition());
 }
@@ -82,7 +79,7 @@ Transition Menu_init() {
 	initMenuStateTime();
 	initMenuStateRegadorStatus();
 	initMenuStateZones();
-	initialTransition.nextState = &menuStateRegadorStatus.selfState;
+	initialTransition.nextState = &menuStateRegadorStatus.super;
 	initialTransition.dataFornextState = &regadorStatusData;
 	return initialTransition;
 }

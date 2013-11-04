@@ -15,7 +15,7 @@ void StateCfgNumber_new(StateCfgNumber * this, char* label, uint16_t * variable,
 	this->returnTransition = returnTransition;
 	this->shouldPrint = true;
 	this->lastSelectedValue = *variable;
-	State_new(&(this->selfState), &StateCfgNumber_cfgNumber);
+	State_new(&(this->super),this, &StateCfgNumber_cfgNumber);
 }
 
 void StateCfgNumber_updateScreen(StateCfgNumber* instance) {
@@ -31,35 +31,35 @@ void StateCfgNumber_updateScreen(StateCfgNumber* instance) {
 	}
 }
 
-Transition StateCfgNumber_cfgNumber(void * data) {
+Transition StateCfgNumber_cfgNumber(void * instance, void * data) {
 	Transition transition;
 	ButtonsStatus buttonStatus;
-	StateCfgNumberTransitionData * transitionData = (StateCfgNumberTransitionData *) data;
-	StateCfgNumber * instance = transitionData->instance;
+	StateCfgNumber * this = instance;
 
-	if (instance->shouldPrint) {
-		instance->lastSelectedValue = *instance->variable;
+	if (this->shouldPrint) {
+		this->lastSelectedValue = *this->variable;
 		//Force print the last selected value.
-		instance->lastPrintValue = instance->lastSelectedValue + 1;
+		this->lastPrintValue = this->lastSelectedValue + 1;
 	}
 
-	StateCfgNumber_updateScreen(instance);
-	transition.nextState = &(instance->selfState);
-	transition.dataFornextState = transitionData;
-	instance->shouldPrint = false;
+	StateCfgNumber_updateScreen(this);
+	transition.nextState = &(this->super);
+	transition.dataFornextState = NULL;
+
+	this->shouldPrint = false;
 
 	readButtons(&buttonStatus);
 	if (buttonStatus.button.enter) {
-		*instance->variable = instance->lastSelectedValue;
-		instance->shouldPrint = true;
-		transition = *instance->returnTransition;
+		*this->variable = this->lastSelectedValue;
+		this->shouldPrint = true;
+		transition = *this->returnTransition;
 	} else if (buttonStatus.button.back) {
-		instance->shouldPrint = true;
-		transition = *instance->returnTransition;
+		this->shouldPrint = true;
+		transition = *this->returnTransition;
 	} else if (buttonStatus.button.down) {
-		instance->lastSelectedValue--;
+		this->lastSelectedValue--;
 	} else if (buttonStatus.button.up) {
-		instance->lastSelectedValue++;
+		this->lastSelectedValue++;
 	}
 	return transition;
 }

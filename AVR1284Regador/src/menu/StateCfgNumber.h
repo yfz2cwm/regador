@@ -12,7 +12,7 @@
 #include "../state/State.h"
 
 typedef struct {
-	State selfState;
+	State super;
 	char * label;
 	uint16_t * variable;
 	Transition * returnTransition;
@@ -22,10 +22,9 @@ typedef struct {
 } StateCfgNumber;
 
 typedef struct {
-	StateCfgNumber * instance;
 } StateCfgNumberTransitionData;
 
-Transition StateCfgNumber_cfgNumber(void * data);
+Transition StateCfgNumber_cfgNumber(void * instance, void * data);
 
 void StateCfgNumber_new(StateCfgNumber * this, char* label, uint16_t * variable, Transition * returnTransition);
 

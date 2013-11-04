@@ -21,7 +21,6 @@
 
 State clock;
 
-
 //100 ms
 uint8_t lastSecond = 99;
 
@@ -29,7 +28,7 @@ typedef struct {
 	Timer * timer;
 } ClockUpdateData;
 
-Transition clockUpdate(void* data) {
+Transition clockUpdate(void* stateInstance, void* data) {
 	Transition toReturn;
 
 	toReturn.dataFornextState = data;
@@ -77,7 +76,7 @@ void doStuff(void) {
 
 	menuInitialTransition = Menu_init();
 
-	State_new(&clock, &clockUpdate);
+	State_new(&clock, NULL, &clockUpdate);
 
 	clockUpdateData.timer = timer;
 

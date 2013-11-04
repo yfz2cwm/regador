@@ -16,7 +16,7 @@ void StateMenuEntry_new(StateMenuEntry * this, char * label, Transition up, Tran
 	this->back = back;
 	this->enter = enter;
 	this->firstTime = true;
-	State_new(&(this->selfState), &StateMenuEntry_showMenu);
+	State_new(&(this->super),this, &StateMenuEntry_showMenu);
 }
 
 void StateMenuEntry_updateScreen(StateMenuEntry * this) {
@@ -26,37 +26,37 @@ void StateMenuEntry_updateScreen(StateMenuEntry * this) {
 	}
 }
 
-Transition StateMenuEntry_showMenu(void * data) {
+Transition StateMenuEntry_showMenu(void* instance, void * data) {
 	ButtonsStatus buttonStatus;
 	Transition noTransition;
+	StateMenuEntry * this = (StateMenuEntry *) instance;
 
-	MenuEntryTransitionData * transitionData = (MenuEntryTransitionData*) data;
-	StateMenuEntry_updateScreen(transitionData->instance);
-	transitionData->instance->firstTime = false;
+	StateMenuEntry_updateScreen(this);
+	this->firstTime = false;
 	readButtons(&buttonStatus);
 
 	noTransition.dataFornextState = data;
-	noTransition.nextState = &(transitionData->instance->selfState);
+	noTransition.nextState = &(this->super);
 
 	if (buttonStatus.buttons != 0) {
-		transitionData->instance->firstTime = true;
+		this->firstTime = true;
 	}
 
 	if (buttonStatus.button.enter) {
-		if (!Transition_isNullTransition(&(transitionData->instance->enter))) {
-			return transitionData->instance->enter;
+		if (!Transition_isNullTransition(&(this->enter))) {
+			return this->enter;
 		}
 	} else if (buttonStatus.button.back) {
-		if (!Transition_isNullTransition(&(transitionData->instance->back))) {
-			return transitionData->instance->back;
+		if (!Transition_isNullTransition(&(this->back))) {
+			return this->back;
 		}
 	} else if (buttonStatus.button.down) {
-		if (!Transition_isNullTransition(&(transitionData->instance->down))) {
-			return transitionData->instance->down;
+		if (!Transition_isNullTransition(&(this->down))) {
+			return this->down;
 		}
 	} else if (buttonStatus.button.up) {
-		if (!Transition_isNullTransition(&(transitionData->instance->up))) {
-			return transitionData->instance->up;
+		if (!Transition_isNullTransition(&(this->up))) {
+			return this->up;
 		}
 	}
 	return noTransition;

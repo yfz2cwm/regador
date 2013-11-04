@@ -12,7 +12,8 @@ void StateMachine_start(StateMachine * this) {
 	while (!this->stop) {
 		for (i = 0; i < this->currentTransitions->transitionCount; i++) {
 			void * dataForNextStep = this->currentTransitions->transition[i].dataFornextState;
-			Transition transition = this->currentTransitions->transition[i].nextState->stateLoop(dataForNextStep);
+			void * concreteInstance = this->currentTransitions->transition[i].nextState->concreteStateInstance;
+			Transition transition = this->currentTransitions->transition[i].nextState->stateLoop(concreteInstance,dataForNextStep);
 			this->currentTransitions->transition[i] = transition;
 		}
 	}

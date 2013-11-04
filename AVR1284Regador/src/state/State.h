@@ -14,7 +14,7 @@
 typedef struct Transition Transition;
 typedef struct State State;
 
-typedef Transition (*State_stateLoop)(void* transitionData);
+typedef Transition (*State_stateLoop)(void * stateInstance, void* transitionData);
 
 struct Transition {
 	State * nextState;
@@ -24,9 +24,10 @@ struct Transition {
 
 struct State {
 	State_stateLoop stateLoop;
+	void * concreteStateInstance;
 };
 
-void State_new(State * this, State_stateLoop);
+void State_new(State * this, void * concreteStateInstance, State_stateLoop stateLoop);
 
 Transition Transition_nullTransition();
 

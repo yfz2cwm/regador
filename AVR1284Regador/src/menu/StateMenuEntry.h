@@ -11,7 +11,7 @@
 #include "../state/State.h"
 
 typedef struct {
-	State selfState;
+	State super;
 	char * label;
 	Transition up;
 	Transition down;
@@ -21,11 +21,10 @@ typedef struct {
 } StateMenuEntry;
 
 typedef struct {
-	StateMenuEntry * instance;
 } MenuEntryTransitionData;
 
 void StateMenuEntry_new(StateMenuEntry * this,char * label, Transition up, Transition down, Transition enter, Transition back);
 
-Transition StateMenuEntry_showMenu(void * data);
+Transition StateMenuEntry_showMenu(void * instance, void * data);
 
 #endif /* STATEMENUENTRY_H_ */
