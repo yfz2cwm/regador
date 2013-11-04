@@ -7,7 +7,7 @@
 #include "State.h"
 #include <stddef.h>
 
-void State_new(State * this, Transition (*stateLoop)(void*)) {
+void State_new(State * this, State_stateLoop stateLoop) {
 	this->stateLoop = stateLoop;
 }
 
