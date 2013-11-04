@@ -8,16 +8,11 @@
 #ifndef STATEMENUENTRY_H_
 #define STATEMENUENTRY_H_
 #include <stdbool.h>
-#include "../state/State.h"
+#include "StateBaseMenuEntry.h"
 
 typedef struct {
-	State super;
+	StateBaseMenuEntry super;
 	char * label;
-	Transition up;
-	Transition down;
-	Transition enter;
-	Transition back;
-	bool firstTime;
 } StateMenuEntry;
 
 typedef struct {
@@ -26,5 +21,7 @@ typedef struct {
 void StateMenuEntry_new(StateMenuEntry * this,char * label, Transition up, Transition down, Transition enter, Transition back);
 
 Transition StateMenuEntry_showMenu(void * instance, void * data);
+
+State * StateMenuEntry_getState(StateMenuEntry * this);
 
 #endif /* STATEMENUENTRY_H_ */
