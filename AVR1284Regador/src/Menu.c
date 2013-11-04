@@ -11,38 +11,21 @@
 #include "menu/StateCfgNumber.h"
 #include "Timer.h"
 #include "Zone.h"
-
+#include "menu/MenuBuilder.h"
+#include <stddef.h>
 StateMenuEntry menuStateRegadorStatus;
 StateMenuEntry menuStateZones;
 StateMenuEntry menuStateTime;
 MenuEntryTransitionData timeData, zonesData, regadorStatusData;
 
-StateShowNumber showSeconds;
-StateShowNumberTransitionData showSecondsData;
+MenuNumberConfigAndEdit menuSeconds;
+uint16_t number;
 
-StateCfgNumber secondsStateCfg;
-StateCfgNumberTransitionData secondsStateCfgData;
+Transition initCfgSeconds(Transition backTransition) {
 
-void initCfgSeconds() {
-
-	Transition backTransition;
-	backTransition.nextState = &(showSeconds.selfState);
-	backTransition.dataFornextState = &showSecondsData;
-	secondsStateCfgData.instance = &secondsStateCfg;
-	StateCfgNumber_new(&secondsStateCfg, "Segundos*:", (uint16_t *) &(Timer_getInstance()->time.seconds), backTransition);
-}
-
-void initShowSeconds() {
-	Transition backTransition;
-	Transition editTransition;
-	backTransition.nextState = &(menuStateTime.selfState);
-	backTransition.dataFornextState = &timeData;
-	editTransition.nextState = &(secondsStateCfg.selfState);
-	editTransition.dataFornextState = &secondsStateCfgData;
-
-	showSecondsData.instance = &showSeconds;
-
-	StateShowNumber_new(&showSeconds, "Segundos:", (uint16_t *) &(Timer_getInstance()->time.seconds), backTransition, editTransition);
+	Transition showAndEditTransition;
+	showAndEditTransition = MenuBuilder_buildMenuAndConfigurationNumber(&menuSeconds, "Seconds:", "Seconds*:",&number, backTransition);
+	return showAndEditTransition;
 }
 
 void initMenuStateRegadorStatus() {
@@ -81,24 +64,24 @@ void initMenuStateTime() {
 	Transition up;
 	Transition down;
 	Transition enter;
+	Transition toReturnHere;
+
 	timeData.instance = &menuStateTime;
 	up.dataFornextState = &zonesData;
 	up.nextState = &menuStateZones.selfState;
 	down.dataFornextState = &regadorStatusData;
 	down.nextState = &menuStateRegadorStatus.selfState;
-	enter.nextState = &(showSeconds.selfState);
-	enter.dataFornextState = &showSecondsData;
 
+	Transition_new(&toReturnHere, &menuStateTime.selfState, &timeData);
+	enter = initCfgSeconds(toReturnHere);
 	StateMenuEntry_new(&menuStateTime, "Time", up, down, enter, Transition_nullTransition());
 }
 
 Transition Menu_init() {
 	Transition initialTransition;
-	initCfgSeconds();
-	initShowSeconds();
+	initMenuStateTime();
 	initMenuStateRegadorStatus();
 	initMenuStateZones();
-	initMenuStateTime();
 	initialTransition.nextState = &menuStateRegadorStatus.selfState;
 	initialTransition.dataFornextState = &regadorStatusData;
 	return initialTransition;
