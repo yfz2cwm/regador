@@ -17,7 +17,7 @@ void StateShowNumber_new(StateShowNumber * this, char * label, uint16_t * variab
 }
 
 bool StateShowNumber_shouldPaint(StateShowNumber * this){
-	return StateMenuEntry_shouldPaint(this->super);
+	return StateMenuEntry_shouldPaint(&this->super);
 }
 
 void StateShowNumber_updateScreen(StateShowNumber * this) {
