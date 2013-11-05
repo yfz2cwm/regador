@@ -33,7 +33,7 @@ Transition StateShowOnOff_showOnOff(void * instance, void * data) {
 	return StateBaseMenuEntry_doTransitionIfNeeded(&this->super.super);
 }
 
-State * StateShowOnOf_getState(StateShowOnOff * this) {
+State * StateShowOnOff_getState(StateShowOnOff * this) {
 	return StateMenuEntry_getState(&this->super);
 }
 
