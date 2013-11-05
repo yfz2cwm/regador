@@ -18,8 +18,10 @@
 #include "state/State.h"
 #include "Timer.h"
 #include "Menu.h"
+#include "Sprinkler.h"
 
 State clock;
+Sprinkler sprinkler;
 
 //100 ms
 uint8_t lastSecond = 99;
@@ -50,14 +52,19 @@ Transition clockUpdate(void* stateInstance, void* data) {
 
 	return toReturn;
 }
-
+Transition initSprinkler(){
+	Sprinkler_new(&sprinkler);
+	Transition sprinklerInitialTransition;
+	Transition_new(&sprinklerInitialTransition,&sprinkler.super,NULL);
+	return sprinklerInitialTransition;
+}
 void doStuff(void) {
 	StateMachine stateMachine;
 
 	TransitionList transitionList;
-	Transition transitionArray[1];
+	Transition transitionArray[2];
 	transitionList.transition = transitionArray;
-	transitionList.transitionCount = 1;
+	transitionList.transitionCount = 2;
 
 	ClockUpdateData clockUpdateData;
 
@@ -74,13 +81,15 @@ void doStuff(void) {
 	timer = Timer_getInstance();
 	Timer_init(timer);
 
-	menuInitialTransition = Menu_init();
+	menuInitialTransition = Menu_init(&sprinkler);
 
 	State_new(&clock, NULL, &clockUpdate);
+
 
 	clockUpdateData.timer = timer;
 
 	transitionList.transition[0] = menuInitialTransition;
+	transitionList.transition[1] = initSprinkler();
 
 	StateMachine_new(&stateMachine, &transitionList);
 

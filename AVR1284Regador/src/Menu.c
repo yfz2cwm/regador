@@ -9,16 +9,20 @@
 #include "menu/StateMenuEntry.h"
 #include "menu/StateShowNumber.h"
 #include "menu/StateCfgNumber.h"
+#include "menu/StateShowOnOf.h"
 #include "Timer.h"
 #include "Zone.h"
 #include "menu/MenuBuilder.h"
 #include <stddef.h>
 
 StateMenuEntry menuStateRegadorStatus;
+StateShowOnOff sprinklerStatus;
 
 StateMenuEntry menuStateZones;
 StateMenuEntry menuStateTime;
 MenuEntryTransitionData timeData, zonesData, regadorStatusData;
+
+
 
 MenuNumberConfigAndEdit menuSeconds;
 uint16_t number;
@@ -30,13 +34,20 @@ Transition initCfgSeconds(Transition backTransition) {
 	return showAndEditTransition;
 }
 
-void initMenuStateRegadorStatus() {
+void initMenuStateRegadorStatus(Sprinkler * sprinkler) {
+
 	Transition regadorStatusUpTransition;
 	Transition regadorStatusDownTransition;
 	Transition regadorStatusEnterTransition;
 	Transition regadorStatusBackTransition;
+	Transition backToRegador;
 
-	regadorStatusEnterTransition = Transition_nullTransition();
+	Transition_new(&backToRegador,StateMenuEntry_getState(&menuStateRegadorStatus),&regadorStatusData);
+
+	StateShowOnOff_new(&sprinklerStatus,"Sprinkler",&sprinkler->working,backToRegador,Transition_nullTransition());
+	Transition_new(&regadorStatusEnterTransition,StateShowOnOff_getState(&sprinklerStatus),NULL);
+
+
 	regadorStatusBackTransition = Transition_nullTransition();
 	regadorStatusUpTransition.dataFornextState = &timeData;
 	regadorStatusUpTransition.nextState = StateMenuEntry_getState(&menuStateTime);
@@ -82,10 +93,10 @@ void initMenuStateTime() {
 	StateMenuEntry_new(&menuStateTime, "Time", up, down, enter, Transition_nullTransition());
 }
 
-Transition Menu_init() {
+Transition Menu_init(Sprinkler * sprinkler) {
 	Transition initialTransition;
 	initMenuStateTime();
-	initMenuStateRegadorStatus();
+	initMenuStateRegadorStatus(sprinkler);
 	initMenuStateZones();
 	initialTransition.nextState = StateMenuEntry_getState(&menuStateRegadorStatus);
 	initialTransition.dataFornextState = &regadorStatusData;
