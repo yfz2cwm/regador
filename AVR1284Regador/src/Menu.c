@@ -26,7 +26,7 @@ uint16_t number;
 Transition initCfgSeconds(Transition backTransition) {
 
 	Transition showAndEditTransition;
-	showAndEditTransition = MenuBuilder_buildMenuAndConfigurationNumber(&menuSeconds, "Seconds:", "Seconds*:", &number, backTransition);
+	showAndEditTransition = MenuBuilder_buildMenuAndConfigurationNumber(&menuSeconds, "Seconds:", "Seconds*:", &number, backTransition,60,0,true);
 	return showAndEditTransition;
 }
 

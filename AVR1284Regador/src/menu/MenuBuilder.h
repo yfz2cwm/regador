@@ -27,6 +27,9 @@ Transition MenuBuilder_buildMenuAndConfigurationNumber(
 		char * menulabel,
 		char * editLabel,
 		uint16_t * variable,
-		Transition returnTransition);
+		Transition returnTransition,
+		uint16_t upperLimit,
+		uint16_t lowerLimit,
+		bool cycle);
 
 #endif /* MENUBUILDER_H_ */

@@ -12,7 +12,10 @@ Transition MenuBuilder_buildMenuAndConfigurationNumber(
 		char * menulabel,
 		char * editLabel,
 		uint16_t * variable,
-		Transition returnTransition) {
+		Transition returnTransition,
+		uint16_t upperLimit,
+		uint16_t lowerLimit,
+		bool cycle) {
 
 	Transition transitionToShow;
 
@@ -20,6 +23,9 @@ Transition MenuBuilder_buildMenuAndConfigurationNumber(
 	//Transition edit
 	StateCfgNumber_new(&numberConfigAndEdit->cfgNumberState, editLabel, (uint16_t * )variable, &numberConfigAndEdit->toShow);
 	Transition_new(&numberConfigAndEdit->toEdit, &(numberConfigAndEdit->cfgNumberState.super), &(numberConfigAndEdit->cfgNumberTransitionData));
+	StateCfgNumber_setLowerLimit(&numberConfigAndEdit->cfgNumberState,lowerLimit);
+	StateCfgNumber_setUpperLimit(&numberConfigAndEdit->cfgNumberState,upperLimit);
+	StateCfgNumber_setCycle(&numberConfigAndEdit->cfgNumberState,cycle);
 
 	//Transition show
 	StateShowNumber_new(&numberConfigAndEdit->showNumberState, menulabel, variable, returnTransition, numberConfigAndEdit->toEdit);

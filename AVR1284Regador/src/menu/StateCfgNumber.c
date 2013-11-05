@@ -9,13 +9,13 @@
 #include "../lcd/lcd.h"
 #include "../buttons/buttons.h"
 
-void StateCfgNumber_new(StateCfgNumber * this, char* label, uint16_t * variable, Transition * returnTransition) {
+void StateCfgNumber_new(StateCfgNumber * this, char* label, int16_t * variable, Transition * returnTransition) {
 	this->label = label;
 	this->variable = variable;
 	this->returnTransition = returnTransition;
 	this->shouldPrint = true;
 	this->lastSelectedValue = *variable;
-	State_new(&(this->super),this, &StateCfgNumber_cfgNumber);
+	State_new(&(this->super), this, &StateCfgNumber_cfgNumber);
 }
 
 void StateCfgNumber_updateScreen(StateCfgNumber* instance) {
@@ -57,9 +57,51 @@ Transition StateCfgNumber_cfgNumber(void * instance, void * data) {
 		this->shouldPrint = true;
 		transition = *this->returnTransition;
 	} else if (buttonStatus.button.down) {
-		this->lastSelectedValue--;
+		StateCfgNumber_decrease(this);
 	} else if (buttonStatus.button.up) {
-		this->lastSelectedValue++;
+		StateCfgNumber_increase(this);
 	}
 	return transition;
+}
+
+bool StateCfgNumber_isLimited(StateCfgNumber* this){
+	return this->upperLimit != this->lowerLimit;
+}
+
+void StateCfgNumber_setUpperLimit(StateCfgNumber* this, uint16_t limit) {
+	this->upperLimit = limit;
+}
+
+void StateCfgNumber_setLowerLimit(StateCfgNumber* this, uint16_t limit) {
+	this->lowerLimit = limit;
+}
+
+void StateCfgNumber_setCycle(StateCfgNumber* this, bool cycle) {
+	this->cycle = cycle;
+}
+
+void StateCfgNumber_increase(StateCfgNumber* this) {
+	this->lastSelectedValue++;
+	if (StateCfgNumber_isLimited(this)) {
+		if (this->lastSelectedValue > this->upperLimit) {
+			if (this->cycle) {
+				this->lastSelectedValue = this->lowerLimit;
+			} else {
+				this->lastSelectedValue--;
+			}
+		}
+	}
+}
+
+void StateCfgNumber_decrease(StateCfgNumber* this) {
+	this->lastSelectedValue--;
+	if (StateCfgNumber_isLimited(this)) {
+		if (this->lastSelectedValue < this->lowerLimit) {
+			if (this->cycle) {
+				this->lastSelectedValue = this->upperLimit;
+			} else {
+				this->lastSelectedValue++;
+			}
+		}
+	}
 }
