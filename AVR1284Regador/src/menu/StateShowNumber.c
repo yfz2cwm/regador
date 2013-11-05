@@ -16,9 +16,13 @@ void StateShowNumber_new(StateShowNumber * this, char * label, uint16_t * variab
 	this->variable = variable;
 }
 
+bool StateShowNumber_shouldPaint(StateShowNumber * this){
+	return StateMenuEntry_shouldPaint(this->super);
+}
+
 void StateShowNumber_updateScreen(StateShowNumber * this) {
 	StateMenuEntry_updateScreen(&this->super);
-	if (this->super.super.shouldPaint) {
+	if (StateShowNumber_shouldPaint(this)) {
 		char buff[17];
 		snprintf(buff, 17, "%16d", *this->variable);
 		LCDWriteStringXY(0, 1, (const char * )buff);

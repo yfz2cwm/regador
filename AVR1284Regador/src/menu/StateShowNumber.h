@@ -27,4 +27,5 @@ Transition StateShowNumber_showNumber(void * instance, void * data);
 
 State * StateShowNumber_getState(StateShowNumber * this);
 
+bool StateShowNumber_shouldPaint(StateShowNumber * this);
 #endif /* STATESHOWNUMBER_H_ */

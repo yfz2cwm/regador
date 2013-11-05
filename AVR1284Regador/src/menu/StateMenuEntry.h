@@ -18,14 +18,16 @@ typedef struct {
 typedef struct {
 } MenuEntryTransitionData;
 
-void StateMenuEntry_new(StateMenuEntry * this,char * label, Transition up, Transition down, Transition enter, Transition back);
+void StateMenuEntry_new(StateMenuEntry * this, char * label, Transition up, Transition down, Transition enter, Transition back);
 
 Transition StateMenuEntry_showMenu(void * instance, void * data);
 
 State * StateMenuEntry_getState(StateMenuEntry * this);
 
-void StateMenuEntry_setStateLoop(StateMenuEntry * this,State_stateLoop newStateLoop);
+void StateMenuEntry_setStateLoop(StateMenuEntry * this, State_stateLoop newStateLoop);
 
 void StateMenuEntry_updateScreen(StateMenuEntry * this);
+
+bool StateMenuEntry_shouldPaint(StateMenuEntry * this);
 
 #endif /* STATEMENUENTRY_H_ */

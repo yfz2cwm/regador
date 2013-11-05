@@ -14,8 +14,12 @@ void StateMenuEntry_new(StateMenuEntry * this, char * label, Transition up, Tran
 	this->label = label;
 }
 
+bool StateMenuEntry_shouldPaint(StateMenuEntry * this) {
+	return this->super.shouldPaint;
+}
+
 void StateMenuEntry_updateScreen(StateMenuEntry * this) {
-	if (this->super.shouldPaint) {
+	if (StateMenuEntry_shouldPaint(this)) {
 		LCDClear();
 		LCDWriteStringXY(0, 0, this->label);
 	}
@@ -28,10 +32,10 @@ Transition StateMenuEntry_showMenu(void* instance, void * data) {
 	return StateBaseMenuEntry_doTransitionIfNeeded(&this->super);
 }
 
-State * StateMenuEntry_getState(StateMenuEntry * this){
+State * StateMenuEntry_getState(StateMenuEntry * this) {
 	return StateBaseMenuEntry_getState(&this->super);
 }
 
-void StateMenuEntry_setStateLoop(StateMenuEntry * this,State_stateLoop newStateLoop){
-	return StateBaseMenuEntry_setStateLoop(&this->super,newStateLoop);
+void StateMenuEntry_setStateLoop(StateMenuEntry * this, State_stateLoop newStateLoop) {
+	return StateBaseMenuEntry_setStateLoop(&this->super, newStateLoop);
 }
