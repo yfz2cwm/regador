@@ -66,7 +66,6 @@ void doStuff(void) {
 	transitionList.transition = transitionArray;
 	transitionList.transitionCount = 2;
 
-	ClockUpdateData clockUpdateData;
 
 	Transition menuInitialTransition;
 
@@ -85,8 +84,6 @@ void doStuff(void) {
 
 	State_new(&clock, NULL, &clockUpdate);
 
-
-	clockUpdateData.timer = timer;
 
 	transitionList.transition[0] = menuInitialTransition;
 	transitionList.transition[1] = initSprinkler();

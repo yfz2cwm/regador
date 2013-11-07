@@ -25,7 +25,7 @@ MenuEntryTransitionData timeData, zonesData, regadorStatusData;
 
 
 MenuNumberConfigAndEdit menuSeconds;
-uint16_t number;
+int16_t number;
 
 Transition initCfgSeconds(Transition backTransition) {
 
