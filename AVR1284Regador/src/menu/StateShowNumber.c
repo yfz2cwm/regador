@@ -10,7 +10,7 @@
 #include "../lcd/lcd.h"
 #include "../buttons/buttons.h"
 
-void StateShowNumber_new(StateShowNumber * this, char * label, uint16_t * variable, Transition returnTransition, Transition editTransition) {
+void StateShowNumber_new(StateShowNumber * this, char * label, int16_t * variable, Transition returnTransition, Transition editTransition) {
 	StateMenuEntry_new(&this->super, label, Transition_nullTransition(), Transition_nullTransition(), editTransition, returnTransition);
 	StateMenuEntry_setStateLoop(&this->super, &StateShowNumber_showNumber);
 	this->variable = variable;

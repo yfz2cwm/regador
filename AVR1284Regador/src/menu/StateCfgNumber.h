@@ -33,9 +33,9 @@ void StateCfgNumber_new(StateCfgNumber * this, char* label, int16_t * variable, 
 
 void StateCfgNumber_updateScreen(StateCfgNumber* instance);
 
-void StateCfgNumber_setUpperLimit(StateCfgNumber* this, uint16_t limit);
+void StateCfgNumber_setUpperLimit(StateCfgNumber* this, int16_t limit);
 
-void StateCfgNumber_setLowerLimit(StateCfgNumber* this, uint16_t limit);
+void StateCfgNumber_setLowerLimit(StateCfgNumber* this, int16_t limit);
 
 void StateCfgNumber_setCycle(StateCfgNumber* this, bool cycle);
 

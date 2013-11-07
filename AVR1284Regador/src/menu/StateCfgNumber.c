@@ -68,11 +68,11 @@ bool StateCfgNumber_isLimited(StateCfgNumber* this){
 	return this->upperLimit != this->lowerLimit;
 }
 
-void StateCfgNumber_setUpperLimit(StateCfgNumber* this, uint16_t limit) {
+void StateCfgNumber_setUpperLimit(StateCfgNumber* this, int16_t limit) {
 	this->upperLimit = limit;
 }
 
-void StateCfgNumber_setLowerLimit(StateCfgNumber* this, uint16_t limit) {
+void StateCfgNumber_setLowerLimit(StateCfgNumber* this, int16_t limit) {
 	this->lowerLimit = limit;
 }
 

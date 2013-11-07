@@ -15,13 +15,13 @@
 
 typedef struct {
 	StateMenuEntry super;
-	uint16_t * variable;
+	int16_t * variable;
 } StateShowNumber;
 
 typedef struct {
 } StateShowNumberTransitionData;
 
-void StateShowNumber_new(StateShowNumber * this, char* label, uint16_t * variable, Transition returnTransition, Transition editTransition);
+void StateShowNumber_new(StateShowNumber * this, char* label, int16_t * variable, Transition returnTransition, Transition editTransition);
 
 Transition StateShowNumber_showNumber(void * instance, void * data);
 
