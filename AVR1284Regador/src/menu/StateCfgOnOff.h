@@ -23,7 +23,7 @@ typedef struct {
 typedef struct {
 } StateCfgOnOffTransitionData;
 
-Transition StateCfgOnOff_cfgNumber(void * instance, void * data);
+Transition StateCfgOnOff_cfgOnOff(void * instance, void * data);
 
 void StateCfgOnOff_new(StateCfgOnOff * this, char* label, bool * variable, Transition * returnTransition);
 
