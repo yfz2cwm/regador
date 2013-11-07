@@ -10,6 +10,8 @@
 
 #include "StateShowNumber.h"
 #include "StateMenuEntry.h"
+#include "StateShowOnOf.h"
+#include "StateCfgOnOff.h"
 
 typedef struct {
 	StateShowNumber showNumberState;
@@ -18,18 +20,36 @@ typedef struct {
 	StateCfgNumber cfgNumberState;
 	StateCfgNumberTransitionData cfgNumberTransitionData;
 
-	Transition toEdit,toShow;
+	Transition toEdit, toShow;
 
 } MenuNumberConfigAndEdit;
+
+typedef struct {
+	StateShowOnOff showState;
+	StateShowOnOffTransitionData showTransitionData;
+
+	StateCfgOnOff cfgState;
+	StateCfgOnOffTransitionData cfgTransitionData;
+
+	Transition toEdit, toShow;
+
+} MenuOnOffConfigAndEdit;
+
+Transition MenuBuilder_buildMenuAndConfigurationOnOff(
+		MenuOnOffConfigAndEdit * configAndEdit,
+		char * menulabel,
+		char * editLabel,
+		bool * variable,
+		Transition returnTransition);
 
 Transition MenuBuilder_buildMenuAndConfigurationNumber(
 		MenuNumberConfigAndEdit * numberConfigAndEdit,
 		char * menulabel,
 		char * editLabel,
-		uint16_t * variable,
+		int16_t * variable,
 		Transition returnTransition,
-		uint16_t upperLimit,
-		uint16_t lowerLimit,
+		int16_t upperLimit,
+		int16_t lowerLimit,
 		bool cycle);
 
 #endif /* MENUBUILDER_H_ */
