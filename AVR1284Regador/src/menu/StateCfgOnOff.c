@@ -19,7 +19,7 @@ Transition StateCfgOnOff_cfgOnOff(void * instance, void * data) {
 	if (this->shouldPrint) {
 		this->lastSelectedValue = *this->variable;
 		//Force print the last selected value.
-		this->lastPrintValue = this->lastSelectedValue + 1;
+		this->lastPrintValue = !this->lastSelectedValue;
 	}
 
 	StateCfgOnOff_updateScreen(this);
