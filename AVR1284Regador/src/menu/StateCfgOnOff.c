@@ -64,7 +64,7 @@ void StateCfgOnOff_updateScreen(StateCfgOnOff* this) {
 
 	if (this->lastSelectedValue != this->lastPrintValue) {
 		char buff[17];
-		snprintf(buff, 17, "%16s", *this->variable ? "On" : "Off");
+		snprintf(buff, 17, "%16s", this->lastSelectedValue ? "On" : "Off");
 		LCDWriteStringXY(0, 1, (const char *) buff);
 		this->lastPrintValue = this->lastSelectedValue;
 	}
