@@ -10,6 +10,7 @@
 #include "menu/StateShowNumber.h"
 #include "menu/StateCfgNumber.h"
 #include "menu/StateShowOnOf.h"
+#include "menu/StateShowTime.h"
 #include "Timer.h"
 #include "Zone.h"
 #include "menu/MenuBuilder.h"
@@ -19,9 +20,8 @@ StateMenuEntry menuStateRegadorStatus;
 
 StateMenuEntry menuStateZones;
 StateMenuEntry menuStateTime;
+StateShowTime menuStateShowTime;
 MenuEntryTransitionData timeData, zonesData, regadorStatusData;
-
-
 
 MenuOnOffConfigAndEdit sprinklerStatus;
 
@@ -31,13 +31,13 @@ int16_t number;
 Transition initCfgSeconds(Transition backTransition) {
 
 	Transition showAndEditTransition;
-	showAndEditTransition = MenuBuilder_buildMenuAndConfigurationNumber(&menuSeconds, "Seconds:", "Seconds*:", &number, backTransition,59,0,true);
+	showAndEditTransition = MenuBuilder_buildMenuAndConfigurationNumber(&menuSeconds, "Seconds:", "Seconds*:", &number, backTransition, 59, 0, true);
 	return showAndEditTransition;
 }
-Transition initCfgRegadorOnOff(Transition backTransition,Sprinkler *  sprinkler) {
+Transition initCfgRegadorOnOff(Transition backTransition, Sprinkler * sprinkler) {
 
 	Transition showAndEditTransition;
-	showAndEditTransition = MenuBuilder_buildMenuAndConfigurationOnOff(&sprinklerStatus,"Sprinkler","Sprinkler*",&sprinkler->working,backTransition);
+	showAndEditTransition = MenuBuilder_buildMenuAndConfigurationOnOff(&sprinklerStatus, "Sprinkler", "Sprinkler*", &sprinkler->working, backTransition);
 	return showAndEditTransition;
 }
 
@@ -49,9 +49,9 @@ void initMenuStateRegadorStatus(Sprinkler * sprinkler) {
 	Transition regadorStatusBackTransition;
 	Transition backToRegador;
 
-	Transition_new(&backToRegador,StateMenuEntry_getState(&menuStateRegadorStatus),&regadorStatusData);
+	Transition_new(&backToRegador, StateMenuEntry_getState(&menuStateRegadorStatus), &regadorStatusData);
 
-	regadorStatusEnterTransition = initCfgRegadorOnOff(backToRegador,sprinkler);
+	regadorStatusEnterTransition = initCfgRegadorOnOff(backToRegador, sprinkler);
 
 	regadorStatusBackTransition = Transition_nullTransition();
 	regadorStatusUpTransition.dataFornextState = &timeData;
@@ -93,8 +93,11 @@ void initMenuStateTime() {
 	down.dataFornextState = &regadorStatusData;
 	down.nextState = StateMenuEntry_getState(&menuStateRegadorStatus);
 
+
 	Transition_new(&toReturnHere, StateMenuEntry_getState(&menuStateTime), &timeData);
-	enter = initCfgSeconds(toReturnHere);
+//	enter = initCfgSeconds(toReturnHere);
+	Transition_new(&enter,StateShowTime_getState(&menuStateShowTime),NULL);
+	StateShowTime_new(&menuStateShowTime, "Global time",(Time *) &Timer_getInstance()->time, toReturnHere,Transition_nullTransition());
 	StateMenuEntry_new(&menuStateTime, "Time", up, down, enter, Transition_nullTransition());
 }
 
