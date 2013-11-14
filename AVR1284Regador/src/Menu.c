@@ -21,11 +21,13 @@ StateMenuEntry menuStateRegadorStatus;
 StateMenuEntry menuStateZones;
 StateMenuEntry menuStateTime;
 StateShowTime menuStateShowTime;
-MenuEntryTransitionData timeData, zonesData, regadorStatusData;
+MenuEntryTransitionData  zonesData, regadorStatusData;
 
 MenuOnOffConfigAndEdit sprinklerStatus;
 
 MenuNumberConfigAndEdit menuSeconds;
+
+MenuTimeShowAndEdit globalTimeMenu;
 int16_t number;
 
 Transition initCfgSeconds(Transition backTransition) {
@@ -43,8 +45,6 @@ Transition initCfgRegadorOnOff(Transition backTransition, Sprinkler * sprinkler)
 
 void initMenuStateRegadorStatus(Sprinkler * sprinkler) {
 
-	Transition regadorStatusUpTransition;
-	Transition regadorStatusDownTransition;
 	Transition regadorStatusEnterTransition;
 	Transition regadorStatusBackTransition;
 	Transition backToRegador;
@@ -54,51 +54,31 @@ void initMenuStateRegadorStatus(Sprinkler * sprinkler) {
 	regadorStatusEnterTransition = initCfgRegadorOnOff(backToRegador, sprinkler);
 
 	regadorStatusBackTransition = Transition_nullTransition();
-	regadorStatusUpTransition.dataFornextState = &timeData;
-	regadorStatusUpTransition.nextState = StateMenuEntry_getState(&menuStateTime);
-	regadorStatusDownTransition.dataFornextState = &zonesData;
-	regadorStatusDownTransition.nextState = StateMenuEntry_getState(&menuStateZones);
 
-	StateMenuEntry_new(&menuStateRegadorStatus, "Regando", regadorStatusUpTransition, regadorStatusDownTransition, regadorStatusEnterTransition, regadorStatusBackTransition);
+
+	StateMenuEntry_new(&menuStateRegadorStatus, "Regando", Transition_nullTransition(), Transition_nullTransition(), regadorStatusEnterTransition, regadorStatusBackTransition);
 }
 
 void initMenuStateZones() {
-	Transition menuZoneUpTransition;
-	Transition menuZoneDown;
 	Transition menuZoneBackToZonesFromZoneEditTransition;
 	Transition goToZonesDetail;
 	Transition back;
 	back = Transition_nullTransition();
 
-	menuZoneUpTransition.dataFornextState = &regadorStatusData;
-	menuZoneUpTransition.nextState = StateMenuEntry_getState(&menuStateRegadorStatus);
-	menuZoneDown.dataFornextState = &timeData;
-	menuZoneDown.nextState = StateMenuEntry_getState(&menuStateTime);
 	menuZoneBackToZonesFromZoneEditTransition.nextState = StateMenuEntry_getState(&menuStateZones);
 	menuZoneBackToZonesFromZoneEditTransition.dataFornextState = &zonesData;
 
 	goToZonesDetail = Zone_initMenu(menuZoneBackToZonesFromZoneEditTransition);
-	StateMenuEntry_new(&menuStateZones, "Zonas", menuZoneUpTransition, menuZoneDown, goToZonesDetail, back);
+	StateMenuEntry_new(&menuStateZones, "Zonas", Transition_nullTransition(), Transition_nullTransition(), goToZonesDetail, back);
 
 }
 
 void initMenuStateTime() {
-	Transition up;
-	Transition down;
-	Transition enter;
-	Transition toReturnHere;
-
-	up.dataFornextState = &zonesData;
-	up.nextState = StateMenuEntry_getState(&menuStateZones);
-	down.dataFornextState = &regadorStatusData;
-	down.nextState = StateMenuEntry_getState(&menuStateRegadorStatus);
 
 
-	Transition_new(&toReturnHere, StateMenuEntry_getState(&menuStateTime), &timeData);
-//	enter = initCfgSeconds(toReturnHere);
-	Transition_new(&enter,StateShowTime_getState(&menuStateShowTime),NULL);
-	StateShowTime_new(&menuStateShowTime, "Global time",(Time *) &Timer_getInstance()->time, toReturnHere,Transition_nullTransition());
-	StateMenuEntry_new(&menuStateTime, "Time", up, down, enter, Transition_nullTransition());
+	MenuBuilder_buildMenuAndConfigurationTime(&globalTimeMenu, "Global Time", (Time *) &Timer_getInstance()->time, Transition_nullTransition());
+
+
 }
 
 Transition Menu_init(Sprinkler * sprinkler) {
@@ -108,5 +88,10 @@ Transition Menu_init(Sprinkler * sprinkler) {
 	initMenuStateZones();
 	initialTransition.nextState = StateMenuEntry_getState(&menuStateRegadorStatus);
 	initialTransition.dataFornextState = &regadorStatusData;
+
+	MenuBuilder_concatenateStates(&menuStateRegadorStatus.super,&globalTimeMenu.showState.super.super);
+	MenuBuilder_concatenateStates(&globalTimeMenu.showState.super.super, &menuStateZones.super);
+	MenuBuilder_concatenateStates(&menuStateZones.super, &menuStateRegadorStatus.super);
+
 	return initialTransition;
 }

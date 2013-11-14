@@ -6,15 +6,15 @@
  */
 
 #include "MenuBuilder.h"
-Transition MenuBuilder_buildMenuAndConfigurationNumber(
-		MenuNumberConfigAndEdit * numberConfigAndEdit,
-		char * menulabel,
-		char * editLabel,
-		int16_t * variable,
-		Transition returnTransition,
-		int16_t upperLimit,
-		int16_t lowerLimit,
-		bool cycle) {
+#include <stddef.h>
+
+void MenuBuilder_concatenateStates(StateBaseMenuEntry * first, StateBaseMenuEntry * second) {
+	Transition_new(&first->down, StateBaseMenuEntry_getState(second), NULL);
+	Transition_new(&second->up, StateBaseMenuEntry_getState(first), NULL);
+}
+
+Transition MenuBuilder_buildMenuAndConfigurationNumber(MenuNumberConfigAndEdit * numberConfigAndEdit, char * menulabel, char * editLabel, int16_t * variable, Transition returnTransition, int16_t upperLimit, int16_t lowerLimit,
+bool cycle) {
 
 	Transition transitionToShow;
 
@@ -34,12 +34,28 @@ Transition MenuBuilder_buildMenuAndConfigurationNumber(
 	return transitionToShow;
 }
 
-Transition MenuBuilder_buildMenuAndConfigurationOnOff(
-		MenuOnOffConfigAndEdit * configAndEdit,
-		char * menulabel,
-		char * editLabel,
-		bool * variable,
-		Transition returnTransition) {
+Transition MenuBuilder_buildMenuAndConfigurationTime(MenuTimeShowAndEdit* showAndEdit, char * menulabel, Time * variable, Transition returnTransition) {
+	Transition transitionToShow;
+
+	Transition_new(&showAndEdit->toShow, StateShowTime_getState(&showAndEdit->showState), NULL);
+
+	showAndEdit->toEdit = MenuBuilder_buildMenuAndConfigurationNumber(&showAndEdit->cfgHourState, "Hour:", "Hour*:", (int16_t *) &variable->hours, showAndEdit->toShow, 23, 0, true);
+	MenuBuilder_buildMenuAndConfigurationNumber(&showAndEdit->cfgMinuteState, "Minute:", "Minute*:", (int16_t *) &variable->minutes, showAndEdit->toShow, 59, 0, true);
+	MenuBuilder_buildMenuAndConfigurationNumber(&showAndEdit->cfgSecondState, "Second:", "Second*:", (int16_t *) &variable->seconds, showAndEdit->toShow, 59, 0, true);
+
+	MenuBuilder_concatenateStates(&showAndEdit->cfgHourState.showNumberState.super.super, &showAndEdit->cfgMinuteState.showNumberState.super.super);
+	MenuBuilder_concatenateStates(&showAndEdit->cfgMinuteState.showNumberState.super.super, &showAndEdit->cfgSecondState.showNumberState.super.super);
+	MenuBuilder_concatenateStates(&showAndEdit->cfgSecondState.showNumberState.super.super, &showAndEdit->cfgHourState.showNumberState.super.super);
+
+	StateShowTime_new(&showAndEdit->showState, menulabel, variable, returnTransition, showAndEdit->toEdit);
+
+
+	Transition_new(&transitionToShow, StateShowTime_getState(&showAndEdit->showState), NULL);
+	return transitionToShow;
+}
+
+Transition MenuBuilder_buildMenuAndConfigurationOnOff(MenuOnOffConfigAndEdit * configAndEdit, char * menulabel, char * editLabel,
+bool * variable, Transition returnTransition) {
 	Transition transitionToShow;
 
 	//Transition edit

@@ -12,6 +12,7 @@
 #include "StateMenuEntry.h"
 #include "StateShowOnOf.h"
 #include "StateCfgOnOff.h"
+#include "StateShowTime.h"
 
 typedef struct {
 	StateShowNumber showNumberState;
@@ -35,21 +36,24 @@ typedef struct {
 
 } MenuOnOffConfigAndEdit;
 
-Transition MenuBuilder_buildMenuAndConfigurationOnOff(
-		MenuOnOffConfigAndEdit * configAndEdit,
-		char * menulabel,
-		char * editLabel,
-		bool * variable,
-		Transition returnTransition);
+typedef struct {
+	StateShowTime showState;
+	StateShowTimeTransitionData showTransitionData;
 
-Transition MenuBuilder_buildMenuAndConfigurationNumber(
-		MenuNumberConfigAndEdit * numberConfigAndEdit,
-		char * menulabel,
-		char * editLabel,
-		int16_t * variable,
-		Transition returnTransition,
-		int16_t upperLimit,
-		int16_t lowerLimit,
-		bool cycle);
+	MenuNumberConfigAndEdit cfgHourState, cfgMinuteState, cfgSecondState;
+
+	Transition toEdit, toShow;
+
+} MenuTimeShowAndEdit;
+
+Transition MenuBuilder_buildMenuAndConfigurationOnOff(MenuOnOffConfigAndEdit * configAndEdit, char * menulabel, char * editLabel,
+bool * variable, Transition returnTransition);
+
+Transition MenuBuilder_buildMenuAndConfigurationTime(MenuTimeShowAndEdit* showAndEdit, char * menulabel, Time * variable, Transition returnTransition);
+
+Transition MenuBuilder_buildMenuAndConfigurationNumber(MenuNumberConfigAndEdit * numberConfigAndEdit, char * menulabel, char * editLabel, int16_t * variable, Transition returnTransition, int16_t upperLimit, int16_t lowerLimit,
+bool cycle);
+
+void MenuBuilder_concatenateStates(StateBaseMenuEntry * first, StateBaseMenuEntry *second);
 
 #endif /* MENUBUILDER_H_ */
