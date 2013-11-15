@@ -39,9 +39,9 @@ Transition MenuBuilder_buildMenuAndConfigurationTime(MenuTimeShowAndEdit* showAn
 
 	Transition_new(&showAndEdit->toShow, StateShowTime_getState(&showAndEdit->showState), NULL);
 
-	showAndEdit->toEdit = MenuBuilder_buildMenuAndConfigurationNumber(&showAndEdit->cfgHourState, "Hour:", "Hour*:", (int16_t *) &variable->hours, showAndEdit->toShow, 23, 0, true);
-	MenuBuilder_buildMenuAndConfigurationNumber(&showAndEdit->cfgMinuteState, "Minute:", "Minute*:", (int16_t *) &variable->minutes, showAndEdit->toShow, 59, 0, true);
-	MenuBuilder_buildMenuAndConfigurationNumber(&showAndEdit->cfgSecondState, "Second:", "Second*:", (int16_t *) &variable->seconds, showAndEdit->toShow, 59, 0, true);
+	showAndEdit->toEdit = MenuBuilder_buildMenuAndConfigurationNumber(&showAndEdit->cfgHourState, "Hour:", "Hour*:",  &variable->hours, showAndEdit->toShow, 23, 0, true);
+	MenuBuilder_buildMenuAndConfigurationNumber(&showAndEdit->cfgMinuteState, "Minute:", "Minute*:", &variable->minutes, showAndEdit->toShow, 59, 0, true);
+	MenuBuilder_buildMenuAndConfigurationNumber(&showAndEdit->cfgSecondState, "Second:", "Second*:", &variable->seconds, showAndEdit->toShow, 59, 0, true);
 
 	MenuBuilder_concatenateStates(&showAndEdit->cfgHourState.showNumberState.super.super, &showAndEdit->cfgMinuteState.showNumberState.super.super);
 	MenuBuilder_concatenateStates(&showAndEdit->cfgMinuteState.showNumberState.super.super, &showAndEdit->cfgSecondState.showNumberState.super.super);

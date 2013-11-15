@@ -11,9 +11,9 @@
 
 typedef struct {
 	uint16_t ms;
-	uint8_t seconds;
-	uint8_t minutes;
-	uint8_t hours;
+	int16_t seconds;
+	int16_t minutes;
+	int16_t hours;
 } Time;
 
 typedef struct {
