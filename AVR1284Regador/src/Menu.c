@@ -17,10 +17,9 @@
 #include <stddef.h>
 
 StateMenuEntry menuStateRegadorStatus;
-
 StateMenuEntry menuStateZones;
-StateMenuEntry menuStateTime;
 StateShowTime menuStateShowTime;
+
 MenuEntryTransitionData  zonesData, regadorStatusData;
 
 MenuOnOffConfigAndEdit sprinklerStatus;
