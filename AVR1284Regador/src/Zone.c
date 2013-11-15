@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "Zone.h"
 #include "menu/StateMenuEntry.h"
+#include "menu/MenuBuilder.h"
 
 #define ZONE_COUNT 6
 Zone zones[ZONE_COUNT];
@@ -22,39 +23,24 @@ void Zone_initLabels() {
 	}
 }
 
-
 Transition Zone_initMenu(Transition backTransition) {
-	Transition up;
-	Transition down;
 	Transition transitionToReturn;
 
 	uint16_t i;
 
 	Zone_initLabels();
 
-	up.nextState = StateMenuEntry_getState(&zoneMenuEntries[ZONE_COUNT - 1]);
-	up.dataFornextState = &zoneMenuEntriesTransitionData[ZONE_COUNT - 1];
-	down.nextState = StateMenuEntry_getState(&zoneMenuEntries[1]);
-	down.dataFornextState = &zoneMenuEntriesTransitionData[1];
-
-	StateMenuEntry_new(&zoneMenuEntries[0], zoneMenuEntriesLabels[0], up, down, Transition_nullTransition(), backTransition);
-
-	for (i = 1; i < ZONE_COUNT - 1; i++) {
-		up.nextState = StateMenuEntry_getState(&zoneMenuEntries[i - 1]);
-		up.dataFornextState = &zoneMenuEntriesTransitionData[i - 1];
-		down.nextState = StateMenuEntry_getState(&zoneMenuEntries[i + 1]);
-		down.dataFornextState = &zoneMenuEntriesTransitionData[i + 1];
-		StateMenuEntry_new(&zoneMenuEntries[i], zoneMenuEntriesLabels[i], up, down, Transition_nullTransition(), backTransition);
+	for (i = 0; i < ZONE_COUNT; i++) {
+		StateMenuEntry_new(&zoneMenuEntries[i], zoneMenuEntriesLabels[i], Transition_nullTransition(), Transition_nullTransition(), Transition_nullTransition(), backTransition);
 	}
 
-	up.nextState = StateMenuEntry_getState(&zoneMenuEntries[ZONE_COUNT - 2]);
-	up.dataFornextState = &zoneMenuEntriesTransitionData[ZONE_COUNT - 2];
-	down.nextState = StateMenuEntry_getState(&zoneMenuEntries[0]);
-	down.dataFornextState = &zoneMenuEntriesTransitionData[0];
-	StateMenuEntry_new(&zoneMenuEntries[ZONE_COUNT - 1], zoneMenuEntriesLabels[ZONE_COUNT - 1], up, down, Transition_nullTransition(), backTransition);
-	transitionToReturn.nextState = StateMenuEntry_getState(&zoneMenuEntries[0]);
-	transitionToReturn.dataFornextState = &zoneMenuEntriesTransitionData[0];
+	for (i = 0; i < ZONE_COUNT - 1; i++) {
+		MenuBuilder_concatenateStates(&zoneMenuEntries[i].super, &zoneMenuEntries[i + 1].super);
+	}
 
+	MenuBuilder_concatenateStates(&zoneMenuEntries[ZONE_COUNT -1].super, &zoneMenuEntries[0].super);
+
+	Transition_new(&transitionToReturn,StateMenuEntry_getState(&zoneMenuEntries[0]),&zoneMenuEntriesTransitionData[0]);
 	return transitionToReturn;
 }
 
