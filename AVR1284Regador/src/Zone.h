@@ -11,20 +11,22 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "state/State.h"
+#include "menu/MenuBuilder.h"
 
 #define ACTIVATION_CYLCES_COUNT 5
 
 typedef struct {
 	bool enable;
 	Time startTime;
-	uint16_t durationInMinutes;
+	int16_t durationInMinutes;
 } ActivationCycle;
 
 typedef struct {
-	uint16_t port;
-	uint16_t pinNumber;
+	int16_t port;
+	int16_t pinNumber;
 	ActivationCycle activatioinCycles[ACTIVATION_CYLCES_COUNT];
 	bool enable;
+	bool test;
 } Zone;
 
 typedef struct {
@@ -32,6 +34,17 @@ typedef struct {
 	uint16_t count;
 } ZoneList;
 
+typedef struct {
+	MenuTimeShowAndEdit activationTime;
+	MenuOnOffConfigAndEdit enable;
+	MenuOnOffConfigAndEdit test;
+} MenuZoneActivationCycle;
+
+typedef struct {
+	MenuZoneActivationCycle activationCycleMenues[ACTIVATION_CYLCES_COUNT];
+	StateMenuEntry zoneMenu;
+	char label[16];
+} MenuZone;
 
 Transition Zone_initMenu(Transition backTransition);
 
