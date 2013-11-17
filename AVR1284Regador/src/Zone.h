@@ -38,6 +38,8 @@ typedef struct {
 	MenuTimeShowAndEdit activationTime;
 	MenuOnOffConfigAndEdit enable;
 	MenuOnOffConfigAndEdit test;
+	char label[16];
+	StateMenuEntry root;
 } MenuZoneActivationCycle;
 
 typedef struct {
