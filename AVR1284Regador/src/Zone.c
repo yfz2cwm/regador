@@ -24,18 +24,38 @@ void Zone_initLabels() {
 			sprintf(zoneMenuEntries[i].activationCycleMenues[j].label, "Act Cycle %d", j);
 		}
 	}
-
 }
 
 void Zone_initActivationCycleMenu(MenuZone * menuZone, Zone * zoneToEdit) {
+	uint16_t i;
 	Transition backToZoneMenu, backToRoot;
 	Transition_new(&backToZoneMenu, StateMenuEntry_getState(&menuZone->zoneMenu), NULL );
-	Transition_new(&backToRoot, StateMenuEntry_getState(&menuZone->activationCycleMenues->root), NULL );
 
-	StateMenuEntry_new(&menuZone->activationCycleMenues->root, menuZone->activationCycleMenues[0].label, Transition_nullTransition(), Transition_nullTransition(), Transition_nullTransition(), backToZoneMenu);
-	menuZone->activationCycleMenues[0].root.super.enter = MenuBuilder_buildMenuAndConfigurationOnOff(&menuZone->activationCycleMenues[0].enable, "Enable:", "Enable*:", &zoneToEdit->enable, backToRoot);
+	for (i = 0; i < ACTIVATION_CYLCES_COUNT; i++) {
+		Transition_new(&backToRoot, StateMenuEntry_getState(&menuZone->activationCycleMenues[i].root), NULL );
+
+		StateMenuEntry_new(&menuZone->activationCycleMenues[i].root,
+				menuZone->activationCycleMenues[i].label,
+				Transition_nullTransition(),
+				Transition_nullTransition(),
+				Transition_nullTransition(),
+				backToZoneMenu);
+
+		menuZone->activationCycleMenues[i].root.super.enter = MenuBuilder_buildMenuAndConfigurationOnOff(
+				&menuZone->activationCycleMenues[i].enable,
+				"Enable:",
+				"Enable*:",
+				&zoneToEdit->activatioinCycles[i].enable,
+				backToRoot);
+	}
+
+
+	for (i = 0; i < ACTIVATION_CYLCES_COUNT - 1; i++) {
+		MenuBuilder_concatenateStates(&menuZone->activationCycleMenues[i].root.super, &menuZone->activationCycleMenues[i + 1].root.super);
+	}
+	MenuBuilder_concatenateStates(&menuZone->activationCycleMenues[ACTIVATION_CYLCES_COUNT - 1].root.super, &menuZone->activationCycleMenues[0].root.super);
+
 	Transition_new(&menuZone->zoneMenu.super.enter, StateMenuEntry_getState(&menuZone->activationCycleMenues[0].root), NULL );
-
 }
 
 Transition Zone_initMenu(Transition backTransition) {
