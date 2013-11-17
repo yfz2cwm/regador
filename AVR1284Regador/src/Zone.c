@@ -26,6 +26,16 @@ void Zone_initLabels() {
 	}
 }
 
+Transition Zone_buildActivationCycleMenu(MenuZoneActivationCycle  * menuZoneActivationCycle, ActivationCycle * activationCycle, Transition backTransition){
+
+	 return MenuBuilder_buildMenuAndConfigurationOnOff(
+					&menuZoneActivationCycle->enable,
+					"Enable:",
+					"Enable*:",
+					&activationCycle->enable,
+					backTransition);
+}
+
 void Zone_initActivationCycleMenu(MenuZone * menuZone, Zone * zoneToEdit) {
 	uint16_t i;
 	Transition backToZoneMenu, backToRoot;
@@ -41,11 +51,9 @@ void Zone_initActivationCycleMenu(MenuZone * menuZone, Zone * zoneToEdit) {
 				Transition_nullTransition(),
 				backToZoneMenu);
 
-		menuZone->activationCycleMenues[i].root.super.enter = MenuBuilder_buildMenuAndConfigurationOnOff(
-				&menuZone->activationCycleMenues[i].enable,
-				"Enable:",
-				"Enable*:",
-				&zoneToEdit->activatioinCycles[i].enable,
+		menuZone->activationCycleMenues[i].root.super.enter =Zone_buildActivationCycleMenu(
+				&menuZone->activationCycleMenues[i],
+				&zoneToEdit->activatioinCycles[i],
 				backToRoot);
 	}
 
