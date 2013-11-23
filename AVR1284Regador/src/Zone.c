@@ -27,13 +27,21 @@ void Zone_initLabels() {
 }
 
 Transition Zone_buildActivationCycleMenu(MenuZoneActivationCycle  * menuZoneActivationCycle, ActivationCycle * activationCycle, Transition backTransition){
-
-	 return MenuBuilder_buildMenuAndConfigurationOnOff(
-					&menuZoneActivationCycle->enable,
-					"Enable:",
-					"Enable*:",
-					&activationCycle->enable,
-					backTransition);
+	Transition transition;
+	transition = MenuBuilder_buildMenuAndConfigurationOnOff(
+						&menuZoneActivationCycle->enable,
+						"Enable:",
+						"Enable*:",
+						&activationCycle->enable,
+						backTransition);
+	MenuBuilder_buildMenuAndConfigurationTime(
+							&menuZoneActivationCycle->activationTime,
+							"Start time:",
+							&activationCycle->startTime,
+							backTransition);
+	MenuBuilder_concatenateStates(&menuZoneActivationCycle->enable.showState.super.super,
+			&menuZoneActivationCycle->activationTime.showState.super.super);
+	 return transition;
 }
 
 void Zone_initActivationCycleMenu(MenuZone * menuZone, Zone * zoneToEdit) {
