@@ -37,7 +37,6 @@ typedef struct {
 typedef struct {
 	MenuTimeShowAndEdit activationTime;
 	MenuOnOffConfigAndEdit enable;
-	MenuOnOffConfigAndEdit test;
 	MenuNumberConfigAndEdit durationTime;
 	char label[16];
 	StateMenuEntry root;
@@ -45,6 +44,7 @@ typedef struct {
 
 typedef struct {
 	MenuZoneActivationCycle activationCycleMenues[ACTIVATION_CYLCES_COUNT];
+	MenuOnOffConfigAndEdit test;
 	StateMenuEntry zoneMenu;
 	char label[16];
 } MenuZone;

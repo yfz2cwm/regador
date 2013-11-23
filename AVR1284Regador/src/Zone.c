@@ -59,11 +59,12 @@ Transition Zone_buildActivationCycleMenu(MenuZoneActivationCycle  * menuZoneActi
 	 return transition;
 }
 
-void Zone_initActivationCycleMenu(MenuZone * menuZone, Zone * zoneToEdit) {
+void Zone_buildZoneMenu(MenuZone * menuZone, Zone * zoneToEdit) {
 	uint16_t i;
 	Transition backToZoneMenu, backToRoot;
 	Transition_new(&backToZoneMenu, StateMenuEntry_getState(&menuZone->zoneMenu), NULL );
 
+	//Create the activation cycle menues
 	for (i = 0; i < ACTIVATION_CYLCES_COUNT; i++) {
 		Transition_new(&backToRoot, StateMenuEntry_getState(&menuZone->activationCycleMenues[i].root), NULL );
 
@@ -80,11 +81,16 @@ void Zone_initActivationCycleMenu(MenuZone * menuZone, Zone * zoneToEdit) {
 				backToRoot);
 	}
 
+	//Create test zone menu
+	MenuBuilder_buildMenuAndConfigurationOnOff(&menuZone->test,"Test zone:","Test zone*:",&zoneToEdit->test,backToZoneMenu);
 
+	//Concatenate activation cycles menues among them
 	for (i = 0; i < ACTIVATION_CYLCES_COUNT - 1; i++) {
 		MenuBuilder_concatenateStates(&menuZone->activationCycleMenues[i].root.super, &menuZone->activationCycleMenues[i + 1].root.super);
 	}
-	MenuBuilder_concatenateStates(&menuZone->activationCycleMenues[ACTIVATION_CYLCES_COUNT - 1].root.super, &menuZone->activationCycleMenues[0].root.super);
+
+	MenuBuilder_concatenateStates(&menuZone->activationCycleMenues[ACTIVATION_CYLCES_COUNT - 1].root.super,
+			&menuZone->test.showState.super.super);
 
 	Transition_new(&menuZone->zoneMenu.super.enter, StateMenuEntry_getState(&menuZone->activationCycleMenues[0].root), NULL );
 }
@@ -99,7 +105,7 @@ Transition Zone_initMenu(Transition backTransition) {
 	//Initialize the menues
 	for (i = 0; i < ZONE_COUNT; i++) {
 		StateMenuEntry_new(&zoneMenuEntries[i].zoneMenu, zoneMenuEntries[i].label, Transition_nullTransition(), Transition_nullTransition(), Transition_nullTransition(), backTransition);
-		Zone_initActivationCycleMenu(&zoneMenuEntries[i], &zones[i]);
+		Zone_buildZoneMenu(&zoneMenuEntries[i], &zones[i]);
 	}
 
 	//Connect the menues
