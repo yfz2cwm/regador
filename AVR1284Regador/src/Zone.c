@@ -39,8 +39,23 @@ Transition Zone_buildActivationCycleMenu(MenuZoneActivationCycle  * menuZoneActi
 							"Start time:",
 							&activationCycle->startTime,
 							backTransition);
+	MenuBuilder_buildMenuAndConfigurationNumber(
+							&menuZoneActivationCycle->durationTime,
+							"Duration:",
+							"Duration*:",
+							&activationCycle->durationInMinutes,
+							backTransition,
+							60,
+							0,
+							true);
+
 	MenuBuilder_concatenateStates(&menuZoneActivationCycle->enable.showState.super.super,
 			&menuZoneActivationCycle->activationTime.showState.super.super);
+
+	MenuBuilder_concatenateStates(&menuZoneActivationCycle->activationTime.showState.super.super,
+			&menuZoneActivationCycle->durationTime.showNumberState.super.super);
+
+
 	 return transition;
 }
 

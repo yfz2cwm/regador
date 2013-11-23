@@ -38,6 +38,7 @@ typedef struct {
 	MenuTimeShowAndEdit activationTime;
 	MenuOnOffConfigAndEdit enable;
 	MenuOnOffConfigAndEdit test;
+	MenuNumberConfigAndEdit durationTime;
 	char label[16];
 	StateMenuEntry root;
 } MenuZoneActivationCycle;
